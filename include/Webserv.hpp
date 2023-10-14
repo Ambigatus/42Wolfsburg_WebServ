@@ -19,12 +19,18 @@
 
 /*						Containers								*/
 # include <vector>
+# include <map>
 
+/*						Networking								*/
+# include <netinet/in.h>
+# include <arpa/inet.h>
 
 /*						System control							*/
 # include <sys/wait.h> //The sys/wait.h library in C and C++ provides functions and macros for working with process management and handling child processes.
 # include <sys/types.h> //The <sys/types.h> library in C and C++ provides a set of fundamental data types and structures that are used for system-level programming.
 # include <sys/stat.h> //The <sys/stat.h> library in C and C++ provides functions and data structures for working with file and file system-related information.
+# include <sys/socket.h>
+# include <sys/select.h>
 # include <sys/time.h> //The <sys/time.h> library in C and C++ provides functionality for working with time and timing-related operations.
 # include <signal.h> //The <signal.h> library in C and C++ provides features for working with signals, which are software interrupts delivered to a running process.
 

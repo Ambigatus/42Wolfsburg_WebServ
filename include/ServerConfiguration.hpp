@@ -61,7 +61,29 @@ class ServerConfiguration
 		const STR							&getPathErrorPage(short key);
 		const VECTOR<Location>::iterator	getLocationKey(STR key);
 
+		static void							validationToken(STR &param);
+		bool								validationLocations() const;
 
+		public:
+			class ErrorExeption : public std::exception
+			{
+				private:
+					STR		_error_message;
+
+				public:
+					ErrorExeption(STR error_message) throw()
+					{
+						_error_message = "Server configuration error: " + error_message;
+					}
+					virtual const char* what() const throw()
+					{
+						return (_error_message.c_str());
+					}
+					virtual ~ErrorExeption() throw() {}
+			};
+			
+		void								serverSetup();
+		int									getFd();
 };
 
 #endif

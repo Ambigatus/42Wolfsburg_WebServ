@@ -3,9 +3,11 @@ NAME = webserv
 SRC =		src/main.cpp \
 			src/Errors_Handler.cpp \
 			src/Utility.cpp \
+			src/ServerManager.cpp \
 		
 HEADER =	include/Utils.hpp \
 			include/Webserv.hpp \
+			include/ServerManager.hpp \
 
 OBJ = $(SRC:.cpp=.o)
 

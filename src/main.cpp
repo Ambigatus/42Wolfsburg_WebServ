@@ -6,12 +6,12 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:28:43 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/10/14 17:02:56 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/10/21 16:19:58 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Webserv.hpp" // libraries
-#include "./include/ServerManager.hpp" //main class for creating server
+#include "../include/ServerManager.hpp" //main class for creating server
 
 int	main(int argc, char **argv)
 {

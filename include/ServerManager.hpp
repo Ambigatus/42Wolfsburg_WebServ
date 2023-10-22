@@ -12,14 +12,25 @@ class ServerManager
 		/*list of configuration of all servers*/
 		std::vector<ServerConfig>	_servers_config;
 
+		/*keep track of which server configuration corresponds to which file 
+		descriptor, especially for listening sockets.*/
+		std::map<int, ServerConfig> _servers_map;
+
 		/* max_fd - keep track of the highest file descriptor for select method
 		and efficiently monitoring multiple file descriptors when 
 		waiting for data on different connections*/
-		int	max_fd;
+		int	_max_fd;
+
+	/*part for listen_fds - I can replace it with ServerConfig Class if we need it*/
+		std::map<int, int> _listen_fds;      // Map listening sockets to server IDs
+    	std::map<int, Client> _clients_map;
+		int getListenFd(int serverId);
+	/*end of this part*/
 
 	//methods
 		/* init two sets for listening requests(reading and writing FDs)*/
-		void	initializeFdsSets(); 
+		void	initializeFdsSets();
+		void	addToSet(const int , fd_set &);
 
 	public:
 		ServerManager();

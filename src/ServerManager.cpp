@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/10/22 19:39:56 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/10/23 18:27:20 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,39 @@ void    ServerManager::setupServers(std::vector<ServerConfig> _servers_config){
 //start of all system
 void	ServerManager::startServers()
 {
-	fd_set read_fds; // sockets that the server is interested in for reading
-	fd_set write_fds; // sockets that the server is interested in for writing
+	fd_set _read_fds; // sockets that the server is interested in for reading
+	fd_set _write_fds; // sockets that the server is interested in for writing
 	int num_ready_fds; // the number of file descriptors that are ready for reading or writing
-
+	int	select_response;
 	_max_fd = 0;
+	int i;
+	
 	initializeFdsSets();
+	struct timeval timer;//how long select() will wait for ready fd
+	while (true)
+	{
+		timer.tv_sec = 1;//select() will wait 1 second for any activity on fd
+        timer.tv_usec = 0;
+        _read_fds = _read_fds_set;
+        _write_fds = _write_fds_set;
+		/*select() is used for monitoring file descriptors (e.g., sockets) to
+		 see if they are ready for reading, writing, or have encountered exceptions*/
+		if ( (select_response = select(_max_fd + 1, &_read_fds, &_write_fds, NULL, &timer)) < 0 )
+		{
+			std::cerr << "Error: " << "Select doesn't work" << std::endl;
+            exit(1);
+			continue ;
+		}
+		i = 0;
+		while (i <= _max_fd)
+		{
+			/* If this file descriptor corresponds to a server - we get new connection */
+			if (FD_ISSET(i, &_read_fds_set) && _servers_map.count(i))
+                getNewConnection(_servers_map.find(i)->second);
+			i++;
+		}
+		
+	}
 	//doesn't finished
 }
 
@@ -92,4 +119,18 @@ void	ServerManager::addToSet(const int i, fd_set &set)
     FD_SET(i, &set);
     if (i > _max_fd)
         _max_fd = i;
+}
+
+/*accepts a new client connection, logs the connection information, 
+sets up the socket for non-blocking I/O, 
+and keeps track of the connected clients in _clients_map.*/
+void	ServerManager::getNewConnection(ServerConfig &)
+{
+	/* most used address family, gives a socket an IPv4 socket address to
+	allow it to communicate with other hosts over a TCP/IP network*/
+	struct sockaddr_in client_address;
+	/* socklen_t - for storing sizes related to socket address structures */
+	socklen_t client_address_size = sizeof(client_address);
+	
+	//doesn't finished
 }

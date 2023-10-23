@@ -4,10 +4,12 @@ SRC =		src/main.cpp \
 			src/Errors_Handler.cpp \
 			src/Utility.cpp \
 			src/ServerManager.cpp \
+			src/Client.cpp \
 		
 HEADER =	include/Utils.hpp \
 			include/Webserv.hpp \
 			include/ServerManager.hpp \
+			include/Client.hpp \
 
 OBJ = $(SRC:.cpp=.o)
 

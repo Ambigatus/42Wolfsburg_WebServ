@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/10/29 14:30:54 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/10/29 17:26:59 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ void	ServerManager::startServers()
 	fd_set _read_fds; // sockets that the server is interested in for reading
 	fd_set _write_fds; // sockets that the server is interested in for writing
 	int num_ready_fds; // the number of file descriptors that are ready for reading or writing
-	int	select_response;
+	int	select_response;//select() answer
+	int i;//for counting fds
 	_max_fd = 0;
-	int i;
 	
 	initializeFdsSets();
 	struct timeval timer;//how long select() will wait for ready fd
@@ -46,11 +46,11 @@ void	ServerManager::startServers()
 	{
 		timer.tv_sec = 1;//select() will wait 1 second for any activity on fd
         timer.tv_usec = 0;
-        _read_fds = _read_fds_set;
-        _write_fds = _write_fds_set;
+        read_fds = _read_fds_set;
+        write_fds = _write_fds_set;
 		/*select() is used for monitoring file descriptors (e.g., sockets) to
 		 see if they are ready for reading, writing, or have encountered exceptions*/
-		if ( (select_response = select(_max_fd + 1, &_read_fds, &_write_fds, NULL, &timer)) < 0 )
+		if ( (select_response = select(_max_fd + 1, &read_fds, &write_fds, NULL, &timer)) < 0 )
 		{
 			std::cerr << "Error: " << "Select doesn't work" << std::endl;
             exit(1);
@@ -60,8 +60,11 @@ void	ServerManager::startServers()
 		while (i <= _max_fd)
 		{
 			/* If this file descriptor corresponds to a server - we get new connection */
-			if (FD_ISSET(i, &_read_fds_set) && _servers_map.count(i))
+			if (FD_ISSET(i, &read_fds) && _servers_map.count(i))
                 getNewConnection(_servers_map.find(i)->second);
+			else if (FD_ISSET(i, &read_fds) && _clients_map.count(i))
+				readRequest(i, _clients_map[i]);
+			//doesn't finished
 			i++;
 		}
 		
@@ -169,5 +172,19 @@ void	ServerManager::getNewConnection(ServerConfig &server)
 		close(client_socket);
 		return ;
 	}
-	// new_client. doesn't finished
+	
+	new_client.setSocket(client_socket);
+	/*if our client exist we rewrite it in map*/
+	if (_clients_map.count(client_socket) != 0)
+		_clients_map.erase(client_socket);
+	_clients_map.insert(std::make_pair(client_socket, new_client));
+}
+
+/*Reads data from the client and provides it to the parser.
+When the parser finishes or detects an error in the request,
+the socket is transferred from the _read_fds_set to the _write_fds_set.
+The response will be sent during the next iteration of the select() function.*/
+void	Client::readRequest(const int &i, Client &client)
+{
+	
 }

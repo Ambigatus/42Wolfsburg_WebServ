@@ -33,6 +33,7 @@ class ServerManager
 		void	addToSet(const int , fd_set &);
 		void	removeFromSet(const int , fd_set &);
 		void	getNewConnection(ServerConfig &);
+		void	readRequest(const int &, Client &);
 
 	public:
 		ServerManager();

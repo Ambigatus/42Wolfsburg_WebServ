@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/10/23 18:27:20 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/10/29 14:30:54 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,16 +121,53 @@ void	ServerManager::addToSet(const int i, fd_set &set)
         _max_fd = i;
 }
 
+/* utility function used to delete file descriptors from a set and maintain information 
+about the largest file descriptor in the set by updating _max_fd. */
+void	ServerManager::removeFromSet(const int i, fd_set &set)
+{
+    FD_CLR(i, &set);
+    if (i == _max_fd)
+        _max_fd--;
+}
+
 /*accepts a new client connection, logs the connection information, 
 sets up the socket for non-blocking I/O, 
 and keeps track of the connected clients in _clients_map.*/
-void	ServerManager::getNewConnection(ServerConfig &)
+void	ServerManager::getNewConnection(ServerConfig &server)
 {
 	/* most used address family, gives a socket an IPv4 socket address to
 	allow it to communicate with other hosts over a TCP/IP network*/
-	struct sockaddr_in client_address;
+	struct	sockaddr_in _client_ip_and_port;
 	/* socklen_t - for storing sizes related to socket address structures */
-	socklen_t client_address_size = sizeof(client_address);
+	socklen_t	client_address_size = sizeof(client_address);
+	/*for the newly accepted client connection*/
+	int			client_socket;
 	
-	//doesn't finished
+	Client	new_client(server);
+	
+	/*INET_ADDRSTRLEN: constant typically from <netinet/in.h> for 
+	IPv4 address(16 symbols)*/
+	char    readable_ip[INET_ADDRSTRLEN];
+	/*accept(int sockfd, struct sockaddr *_Nullable restrict addr,
+    socklen_t *_Nullable restrict addrlen) - accept incoming connections from clients*/
+	client_socket = accept(server.getListenFd(it->getId()), (struct sockaddr *)&_client_ip_and_port,\
+				 (socklen_t*)&client_address_size);
+	if (client_socket == -1)
+	{
+		std::cerr << "Error: " << "Accept error" << std::endl;
+		return ;
+	}
+	std::cout << "New connection!" << std::endl;
+
+	addToSet(client_socket, _read_fds_set);
+	
+	/*makes socket unblocked*/
+	if (fcntl(client_socket, F_SETFL, O_NONBLOCK) < 0)
+	{
+		std::cerr << "Error: " << "Fcntl error" << std::endl;
+		removeFromSet(client_socket, _read_fds_set);
+		close(client_socket);
+		return ;
+	}
+	// new_client. doesn't finished
 }

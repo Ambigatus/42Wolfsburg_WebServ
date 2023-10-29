@@ -31,6 +31,7 @@ class ServerManager
 		/* init two sets for listening requests(reading and writing FDs)*/
 		void	initializeFdsSets();
 		void	addToSet(const int , fd_set &);
+		void	removeFromSet(const int , fd_set &);
 		void	getNewConnection(ServerConfig &);
 
 	public:

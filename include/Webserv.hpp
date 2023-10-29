@@ -43,6 +43,7 @@
 # include "ConfigurationParser.hpp"
 # include "Logger.hpp"
 # include "ServerConfiguration.hpp"
+# include "CGI_Configuration.hpp"
 # include "Utils.hpp"
 
 #endif

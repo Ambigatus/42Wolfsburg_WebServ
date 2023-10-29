@@ -15,11 +15,14 @@
 # include <cctype> //The <cctype> library in C++ provides functions for character handling.
 # include <ctime>
 # include <cstdarg> //The <cstdarg> library in C++ provides functions for handling variable arguments in functions.
-# include "Utils.hpp"
 
 /*						Containers								*/
 # include <vector>
 # include <map>
+# include <set>
+# include <algorithm>
+# include <iterator>
+# include <list>
 
 /*						Networking								*/
 # include <netinet/in.h>
@@ -33,5 +36,13 @@
 # include <sys/select.h>
 # include <sys/time.h> //The <sys/time.h> library in C and C++ provides functionality for working with time and timing-related operations.
 # include <signal.h> //The <signal.h> library in C and C++ provides features for working with signals, which are software interrupts delivered to a running process.
+
+
+/*						HPP Files								*/
+# include "ConfigurationFile.hpp"
+# include "ConfigurationParser.hpp"
+# include "Logger.hpp"
+# include "ServerConfiguration.hpp"
+# include "Utils.hpp"
 
 #endif

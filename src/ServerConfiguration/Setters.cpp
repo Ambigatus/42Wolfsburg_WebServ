@@ -110,11 +110,13 @@ void	ServerConfiguration::setErrorPages(VECTOR<STR> &param)
 		i++;
 		STR path = param[i];
 		validationToken(path);
-		//here the part from Configuration File
-		// if (ConfigFile::getTypePath)
-		// {
-
-		// }
+		if (ConfigurationFile::getTypePath(path) != 2)
+		{
+			if (ConfigurationFile::getTypePath(this->_root + path) != 1)
+				throw ErrorExeption("Error: incorrect path for error page: " + this->_root + path);
+			if (ConfigurationFile::checkConfigFile(this->_root + path, 0) == -1 || ConfigurationFile::checkConfigFile(this->_root + path, 4) == -1)
+				throw ErrorExeption("Error: can't get an access to error page file: " + this->_root + path);
+		}
 		MAP<short, STR>::iterator iter = this->_error_pages.find(err_code);
 		if (iter != _error_pages.end())
 			this->_error_pages[err_code] = path;

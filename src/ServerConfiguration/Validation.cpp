@@ -34,8 +34,16 @@ bool	ServerConfiguration::checkErrPagesValid()
 	{
 		if (iter->first < 100 || iter->first > 599)
 			return false;
-		//we need to add here another part of code after finishing configuration file
-		//We need to check config file for permissions on the file located at the combined root and file path
+		if (ConfigurationFile::checkConfigFile(getRoot() + iter->second, 0) < 0 || ConfigurationFile::checkConfigFile(getRoot() + iter->second, 4) < 0)
+			return false;
 	}
 	return true;
+}
+
+int	ServerConfiguration::checkLocationValid(Location &location) const
+{
+	if (location.getPath() == "/cgi-bin")
+	{
+		//need here CGI handler
+	}
 }

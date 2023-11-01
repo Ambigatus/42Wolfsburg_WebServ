@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/10/29 17:26:59 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/01 17:18:32 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,5 +186,30 @@ the socket is transferred from the _read_fds_set to the _write_fds_set.
 The response will be sent during the next iteration of the select() function.*/
 void	Client::readRequest(const int &i, Client &client)
 {
+	/*used to temporarily store data read from a client's socket*/
+	char	buffer[40000]; //special define?
+	/*keep track of the number of bytes that are read from 
+	the client's socket during the read operation*/
+	int     bytes_read = 0;
 	
+	bytes_read = read(i, buffer, 40000);
+	if (bytes_read == 0)
+	{
+		std::cerr << "Error: " << "Closed connection" << std::endl;
+		closeConnection(i);
+		return ;
+	}
+	//doesn't finished
+}
+
+/*closes the connection with the file descriptor 'i' and removes 
+the corresponding client object from the '_clients_map'*/
+void	ServerManager::closeConnection(const int i)
+{
+	if (FD_ISSET(i, &_write_fds_set))
+        removeFromSet(i, _write_fds_set);
+    if (FD_ISSET(i, &_read_fds_set))
+        removeFromSet(i, _read_fds_set);
+    close(i);
+    _clients_map.erase(i);
 }

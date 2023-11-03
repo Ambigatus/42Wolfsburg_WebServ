@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/01 17:18:32 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/03 14:31:35 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,6 +199,25 @@ void	Client::readRequest(const int &i, Client &client)
 		closeConnection(i);
 		return ;
 	}
+	else if (bytes_read < 0)
+	{
+		std::cerr << "Error: " << "Read problems" << std::endl;
+		closeConnection(i);
+		return ;
+	}
+	else if (bytes_read != 0)
+	{
+		/*updates the timestamp of the last received message from the client. 
+		This is used to monitor client activity and connection timeouts*/
+		client.updateTime();
+		/*data read from the client (stored in 'buffer') is passed to a 'request' object */
+		client.request.feed(buffer, bytes_read);
+		/*clears the buffer*/
+		memset(buffer, 0, sizeof(buffer)); 
+	}
+	
+	/*true - parsing completed and we can work on the response*/
+	// if (client.request.parsingCompleted() || client.request.errorCode())
 	//doesn't finished
 }
 

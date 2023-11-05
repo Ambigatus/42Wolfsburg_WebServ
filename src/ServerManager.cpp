@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/03 14:31:35 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/05 17:55:52 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,10 @@ void	Client::readRequest(const int &i, Client &client)
 	}
 	
 	/*true - parsing completed and we can work on the response*/
-	// if (client.request.parsingCompleted() || client.request.errorCode())
+	if (true)//check if parsing is completed!!!
+	{
+		assignServer(client);
+	}
 	//doesn't finished
 }
 
@@ -231,4 +234,16 @@ void	ServerManager::closeConnection(const int i)
         removeFromSet(i, _read_fds_set);
     close(i);
     _clients_map.erase(i);
+}
+
+void	ServerManager::assignServer(Client &client)
+{
+	std::vector<ServerConfig>::iterator it = _servers_config.begin();
+	
+	while(it != _servers_config.end())
+	{
+		// if (client.server.)
+		it++;
+		//doesn't finished
+	}
 }

@@ -34,6 +34,7 @@ class ServerManager
 		void	removeFromSet(const int , fd_set &);
 		void	getNewConnection(ServerConfig &);
 		void	readRequest(const int &, Client &);
+		void	assignServer(Client &);
 
 		void	closeConnection(const int);
 

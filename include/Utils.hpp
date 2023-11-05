@@ -28,6 +28,7 @@
 # define VECTOR		std::vector //vector container
 # define EXCEPTION	std::exception() //exception
 # define HEX		std::hex // hexadecimal output mode
+# define MAP		std::map //map container
 # define LINE	"==****************************************************************=="
 
 /* Other */

@@ -36,6 +36,7 @@ class ServerManager
 		void	getNewConnection(ServerConfig &);
 		void	readRequest(const int &, Client &);
 		void	assignServer(Client &);
+		void	checkTimeout();
 
 		void	closeConnection(const int);
 

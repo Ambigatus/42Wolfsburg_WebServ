@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/07 17:06:02 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/07 17:43:38 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	ServerManager::startServers()
 		 see if they are ready for reading, writing, or have encountered exceptions*/
 		if ( (select_response = select(_max_fd + 1, &read_fds, &write_fds, NULL, &timer)) < 0 )
 		{
-			// Logger::messageLog()//error!
+			std::cerr << "Error: " << "Select() error!" << std::endl;
             exit(1);
 			continue ;
 		}
@@ -64,12 +64,16 @@ void	ServerManager::startServers()
                 getNewConnection(_servers_map.find(i)->second);
 			else if (FD_ISSET(i, &read_fds) && _clients_map.count(i))
 				readRequest(i, _clients_map[i]);
+			else if (FD_ISSET(i, &write_fds) && _clients_map.count(i))
+			{
+				//cgi part
+			}
 			//doesn't finished
 			i++;
 		}
 		
 	}
-	//doesn't finished
+	checkTimeout();
 }
 
 /*init for all sets of fds for listening requests*/
@@ -217,9 +221,13 @@ void	Client::readRequest(const int &i, Client &client)
 	}
 	
 	/*true - parsing completed and we can work on the response*/
-	if (true)//check if parsing is completed!!!
+	if (client.request.parsingDone() || client.request.errorCode())
 	{
 		assignServer(client);
+		std::cerr << "Request recived!" << std::endl;
+		// client.buildResponse();
+		//add Response part and update Fds sets
+		
 	}
 	//doesn't finished
 }
@@ -253,5 +261,24 @@ void	ServerManager::assignServer(Client &client)
 				return ;
 			}
 		it++;
+	}
+}
+
+/*checks if clients have been quiet for too long. If they have,
+ it ends their connection to free up server resources.*/
+void	ServerManager::checkTimeout()
+{
+	std::map<int, Client>::iterator it = _clients_map.begin();
+
+	while (it != _clients_map.end())
+	{
+		/*after 60 seconds we will clean the data*/
+		if (time(NULL) - it->second.getLastTime() > CONNECTION_TIMEOUT)
+		{
+			std::cerr << "Error: " << "Timeout. Closing connection" << std::endl;
+			closeConnection(it->first);
+			return ;
+		}
+		++it;
 	}
 }

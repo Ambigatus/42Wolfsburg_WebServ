@@ -70,7 +70,7 @@ void	CGIConfig::CGIEnvInitialization(HTTPRequest &request, const VECTOR<Location
 		if (_cgi_path.length() > 0)
 			_cgi_path.insert(0, tmp);
 	}
-	// if (request.getMethod() == POST) i need here part from HTTP request part
+	if ()
 	{
 
 	}

@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:46:04 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/10/29 12:37:49 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/07 16:38:06 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,3 +81,7 @@ void    Client::setIp(sockaddr_in &ip)
     _client_ip_and_port = ip;
 }
 
+void    Client::setServer(ServerConfig &server)
+{
+    //we need response for that!
+}

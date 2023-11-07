@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/05 17:55:52 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/07 16:16:59 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	ServerManager::startServers()
 		 see if they are ready for reading, writing, or have encountered exceptions*/
 		if ( (select_response = select(_max_fd + 1, &read_fds, &write_fds, NULL, &timer)) < 0 )
 		{
-			std::cerr << "Error: " << "Select doesn't work" << std::endl;
+			// Logger::messageLog()//error!
             exit(1);
 			continue ;
 		}
@@ -236,6 +236,7 @@ void	ServerManager::closeConnection(const int i)
     _clients_map.erase(i);
 }
 
+/*assigning a specific server configuration to a client based on the client's request*/
 void	ServerManager::assignServer(Client &client)
 {
 	std::vector<ServerConfig>::iterator it = _servers_config.begin();

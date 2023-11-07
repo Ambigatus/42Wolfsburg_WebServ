@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:45:02 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/10/29 12:46:49 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/07 16:35:45 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,10 @@ class Client
 		Client &operator=(const Client & rhs);
 		~Client();
 
+		/*needed objects*/
 		//Response object
 		//Request object
-		//ServerConfig object
+		ServerConfig server;
 
 	//getters
 		/*we need & here for incapsulation*/
@@ -51,7 +52,7 @@ class Client
 	//setter
 		void                setSocket(int &);
         void                setIp(sockaddr_in &);
-        // void                setServer(ServerConfig &);//?
+        void                setServer(ServerConfig &);
 		
 	//methods
 		//build Response

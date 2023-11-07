@@ -2,6 +2,7 @@
 # define SERVERMANAGER_HPP
 
 #include "Webserv.hpp"//libraries
+#include "Client.hpp"//all data for Client part
 
 
 //class for init server

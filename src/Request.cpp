@@ -221,33 +221,32 @@ void Request::_handleHeaders()
 {
 	std::stringstream ss;
 
-	if (_request_headers.count("content-lenght"))
+	if (_request_headers.count("content-length"))
 	{
 		_fbody = true;
 		ss << _request_headers["content-length"];
 		ss >> _body_len;
 	}
-
-	if (_request_headers.count("transfer-encoding"))
+	if ( _request_headers.count("transfer-encoding"))
 	{
-		if (_request_headers["transfer-encoding"].find("chunked") != STR::npos)
+		if (_request_headers["transfer-encoding"].find_first_of("chunked") != std::string::npos)
 			_fchunked = true;
 		_fbody = true;
 	}
-
 	if (_request_headers.count("host"))
 	{
 		size_t pos = _request_headers["host"].find_first_of(':');
 		_server_name = _request_headers["host"].substr(0, pos);
 	}
-
-	if (_request_headers.count("content-type") && _request_headers["content-type"].find("multipart/form-data") != STR::npos)
+	if (_request_headers.count("content-type") && _request_headers["content-type"].find("multipart/form-data") != std::string::npos)
 	{
 		size_t pos = _request_headers["content-type"].find("boundary=", 0);
-		if (pos != STR::npos)
-			_boundary = _request_headers["content-type"].substr(pos + 9, _request_headers["content-type"].size());
-		_flag = true;
+		if (pos != std::string::npos)
+			this->_boundary = _request_headers["content-type"].substr(pos + 9, _request_headers["content-type"].size());
+		this->_flag = true;
 	}
+	COUT << "FBODYYYYY " << _fbody << ENDL;
+	COUT << "SERVER NAME  " << _server_name << ENDL;
 }
 
 short Request::errorCode()
@@ -406,7 +405,7 @@ void Request::feed(char *data, size_t size)
 				if (character != ' ')
 				{
 					_err_code = 400;
-					std::cout << "Request_Line_First_Space Error: Bad Character" << std::endl;
+					COUT << "Request_Line_First_Space Error: Bad Character" << ENDL;
 					return ;
 				}
 				_state = Request_Line_URI_Path_Slash;
@@ -440,7 +439,7 @@ void Request::feed(char *data, size_t size)
 				}
 				else if (character == '?')
 				{
-					_state = Request_Line_URI_Fragment;
+					_state = Request_Line_URI_Query;
 					_path.append(_storage);
 					_storage.clear();
 					continue ;
@@ -474,7 +473,7 @@ void Request::feed(char *data, size_t size)
 					_state = Request_Line_Ver;
 					_query.append(_storage);
 					_storage.clear();
-					return ;
+					continue ;
 				}
 				else if (character == '#')
 				{
@@ -505,7 +504,7 @@ void Request::feed(char *data, size_t size)
 					_state = Request_Line_Ver;
 					_query.append(_storage);
 					_storage.clear();
-					return ;
+					continue ;
 				}
 				else if (!allowedCharURI(character))
 				{
@@ -545,7 +544,7 @@ void Request::feed(char *data, size_t size)
 				if (character != 'T')
 				{
 					_err_code = 400;
-					std::cout << "Request_Line_HT: Bad Character" << std::endl;
+					COUT << "Request_Line_HT: Bad Character" << ENDL;
 					return ;
 				}
 				_state = Request_Line_HTT;
@@ -557,7 +556,7 @@ void Request::feed(char *data, size_t size)
 				if (character != 'T')
 				{
 					_err_code = 400;
-					std::cout << "Request_Line_HTT: Bad Character" << std::endl;
+					COUT << "Request_Line_HTT: Bad Character" << ENDL;
 					return ;
 				}
 				_state = Request_Line_HTTP;
@@ -569,7 +568,7 @@ void Request::feed(char *data, size_t size)
 				if (character != 'P')
 				{
 					_err_code = 400;
-					std::cout << "Request_Line_HTTP: Bad Character" << std::endl;
+					COUT << "Request_Line_HTTP: Bad Character" << ENDL;
 					return ;
 				}
 				_state = Request_Line_HTTP_Slash;
@@ -581,7 +580,7 @@ void Request::feed(char *data, size_t size)
 				if (character != '/')
 				{
 					_err_code = 400;
-					std::cout << "Request_Line_HTTP_Slash: Bad Character" << std::endl;
+					COUT << "Request_Line_HTTP_Slash: Bad Character" << ENDL;
 					return ;
 				}
 				_state = Request_Line_Major;
@@ -753,7 +752,7 @@ void Request::feed(char *data, size_t size)
 				s.str("");
 				s.clear();
 				s << character;
-				s >> std::hex >> _chunk_len;
+				s >> HEX >> _chunk_len;
 				if (_chunk_len == 0)
 					_state = Chunked_Len_CR;
 				else
@@ -769,7 +768,7 @@ void Request::feed(char *data, size_t size)
 					s.str("");
 					s.clear();
 					s << character;
-					s >> std::hex >> temp_len;
+					s >> HEX >> temp_len;
 					_chunk_len *= 16;
 					_chunk_len += temp_len;
 				}
@@ -787,7 +786,7 @@ void Request::feed(char *data, size_t size)
 				else
 				{
 					_err_code = 400;
-					std::cout << "Bad Character (Chunked_Length_CR)" << std::endl;
+					COUT << "Bad Character (Chunked_Length_CR)" << ENDL;
 					return ;
 				}
 				continue ;
@@ -817,7 +816,7 @@ void Request::feed(char *data, size_t size)
 					_state = Chunked_Len_LF;
 				continue ;
 			}
-
+		
 			case Chunked_Data:
 			{
 				_body.push_back(character);
@@ -877,10 +876,10 @@ void Request::feed(char *data, size_t size)
 				_state = Parsing_Done;
 				continue ;
 			}
-
+			
 			case Message_Body:
 			{
-				if (_body.size() << _body_len)
+				if (_body.size() < _body_len)
 					_body.push_back(character);
 				if (_body.size() == _body_len)
 				{

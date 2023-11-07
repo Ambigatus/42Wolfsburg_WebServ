@@ -35,7 +35,7 @@ int main()
 						"Host: www.example.com\r\n"
 						"User-Agent: MyUserAgent\r\n"
 						"Accept: text/html\r\n"
-						"\r\n" 
+						"\r\n"
 						"This is the HTTP request body.";
 
 	size_t requestDataSize = sizeof(requestData) - 1;

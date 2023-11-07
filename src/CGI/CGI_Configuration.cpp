@@ -70,10 +70,47 @@ void	CGIConfig::CGIEnvInitialization(HTTPRequest &request, const VECTOR<Location
 		if (_cgi_path.length() > 0)
 			_cgi_path.insert(0, tmp);
 	}
-	if ()
+	if (request.getMethod() == POST)
 	{
-
+		std::stringstream out;
+		out << request.getBody().length();
+		this->_env["CONTENT_LENGTH"] = out.str();
+		this->_env["CONTENT_TYPE"] = request.getHeader("content-type");
 	}
+
+	this->_env["GATEWAY_INTERFACE"] = STR("CGI/1.1");
+	this->_env["SCRIPT_NAME"] = cgi_exec;
+	this->_env["SCRIPT_FILENAME"] = this->_cgi_path;
+	this->_env["PATH_INFO"] = this->_cgi_path;
+	this->_env["PATH_TRANSLATED"] = this->_cgi_path;
+	this->_env["REQUEST_URI"] = this->_cgi_path;
+	this->_env["SERVER_NAME"] = request.getHeader("host");
+	this->_env["SERVER_PORT"] = "8002";
+	this->_env["REQUEST_METHOD"] = request.getMethodStr();
+	this->_env["SERVER_PROTOCOL"] = "HTTP/1.1";
+	this->_env["REDIRECT_STATUS"] = "200";
+	this->_env["SERVER_SOFTWARE"] = "AMANIX";
+
+	MAP<STR, STR>request_headers = request.getHeaders();
+	for (MAP<STR, STR>::iterator iter = request_headers.begin();
+		iter != request_headers.end(); ++iter)
+	{
+		STR name = iter->first;
+		std::transform(name.begin(), name.end(), ::toupper);
+		STR key = "HTTP_" + name;
+		_env[key] = iter->second;
+	}
+	this->_char_env = (char **)calloc(sizeof(char *), this->_env.size() + 1);
+	MAP<STR, STR>::const_iterator iter = this->_env.begin();
+	for (int i = 0; iter != this->_env.end(); iter++, i++)
+	{
+		STR temp = iter->first + "=" + iter->second;
+		this->_char_env[i] = strdup(temp.c_str());
+	}
+	this->_argv = (char **)malloc(sizeof(char *) * 3);
+	this->_argv[0] = strdup(cgi_exec.c_str());
+	this->_argv[1] = strdup(this->_cgi_path.c_str());
+	this->_argv[2] = NULL;
 }
 
 void	CGIConfig::envInitializatation(HTTPRequest &request, const VECTOR<Location>::iterator iter_loc)

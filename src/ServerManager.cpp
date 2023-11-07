@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/07 16:16:59 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/07 16:53:20 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,7 +243,9 @@ void	ServerManager::assignServer(Client &client)
 	
 	while(it != _servers_config.end())
 	{
-		// if (client.server.)
+		if (client.server.getHost() == it->getHost() && \
+			client.server.getPort() == it->getPort() && \ 
+			client.request)
 		it++;
 		//doesn't finished
 	}

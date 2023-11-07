@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:45:02 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/07 16:35:45 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/07 16:59:32 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define CLIENT_HPP
 
 #include "Webserv.hpp"
-//we need Request
+#include "Request.hpp"
 //we need Response
 
 /* Stores all information about Client during Request-Response process*/
@@ -39,15 +39,15 @@ class Client
 
 		/*needed objects*/
 		//Response object
-		//Request object
-		ServerConfig server;
+		Request			request;
+		ServerConfig	server;
 
 	//getters
 		/*we need & here for incapsulation*/
-		const int                 &getSocket() const;
-        const struct sockaddr_in  &getIp() const;
-        const time_t              &getLastTime() const;
-		//getter for Request
+		const int                 	&getSocket() const;
+        const struct sockaddr_in  	&getIp() const;
+        const time_t              	&getLastTime() const;
+		const Request				&getRequest() const;
 		
 	//setter
 		void                setSocket(int &);

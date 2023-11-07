@@ -15,7 +15,7 @@ Request::Request()
 	  _fbody_done(false),
 	  _fcompete(false),
 	  _fchunked(false),
-	  _flag(false)
+	  _fmultiform(false)
 {
 	_method_str[GET] = "GET";
 	_method_str[POST] = "POST";
@@ -54,7 +54,7 @@ Request::Request(const Request &copy)
 		this->_fbody = copy._fbody;
 		this->_fbody_done = copy._fbody_done;
 		this->_fchunked = copy._fchunked;
-		this->_flag = copy._flag;
+		this->_fmultiform = copy._fmultiform;
 		this->_body_len = copy._body_len;
 		this->_storage = copy._storage;
 		this->_key_storage = copy._key_storage;
@@ -85,7 +85,7 @@ Request &Request::operator=(const Request &copy)
 		this->_fbody = copy._fbody;
 		this->_fbody_done = copy._fbody_done;
 		this->_fchunked = copy._fchunked;
-		this->_flag = copy._flag;
+		this->_fmultiform = copy._fmultiform;
 		this->_body_len = copy._body_len;
 		this->_storage = copy._storage;
 		this->_key_storage = copy._key_storage;
@@ -114,14 +114,14 @@ STR &Request::getFragment()
 	return _fragment;
 }
 
-STR Request::getHeader(const STR &name)
+STR Request::getHeader(STR const &name)
 {
 	MAP<STR, STR>::const_iterator it = _request_headers.find(name);
 	if (it != _request_headers.end())
 	{
 		return it->second;
 	}
-	return "";
+	return _request_headers[name];
 }
 
 const MAP<STR, STR> &Request::getHeaders() const
@@ -160,7 +160,7 @@ STR Request::getServerName()
 
 bool Request::getFlag()
 {
-	return _flag;
+	return _fmultiform;
 }
 
 STR &Request::getBoundary()
@@ -188,7 +188,7 @@ void Request::setHeader(STR &name, STR &value)
 
 	for(size_t i = 0; i < _storage.length(); ++i)
 		_storage[i] = std::tolower(_storage[i]);
-	_request_headers[_storage] = value;
+	_request_headers[name] = value;
 }
 
 void Request::setMaxBodySize(size_t size)
@@ -229,7 +229,7 @@ void Request::_handleHeaders()
 	}
 	if ( _request_headers.count("transfer-encoding"))
 	{
-		if (_request_headers["transfer-encoding"].find_first_of("chunked") != std::string::npos)
+		if (_request_headers["transfer-encoding"].find_first_of("chunked") != STR::npos)
 			_fchunked = true;
 		_fbody = true;
 	}
@@ -238,15 +238,16 @@ void Request::_handleHeaders()
 		size_t pos = _request_headers["host"].find_first_of(':');
 		_server_name = _request_headers["host"].substr(0, pos);
 	}
-	if (_request_headers.count("content-type") && _request_headers["content-type"].find("multipart/form-data") != std::string::npos)
+	if (_request_headers.count("content-type") && _request_headers["content-type"].find("multipart/form-data") != STR::npos)
 	{
 		size_t pos = _request_headers["content-type"].find("boundary=", 0);
-		if (pos != std::string::npos)
+		if (pos != STR::npos)
 			this->_boundary = _request_headers["content-type"].substr(pos + 9, _request_headers["content-type"].size());
-		this->_flag = true;
+		this->_fmultiform = true;
 	}
-	// COUT << "FBODYYYYY " << _fbody << ENDL;
-	// COUT << "SERVER NAME  " << _server_name << ENDL;
+	COUT << "FBODYYYYY " << _fbody << ENDL;
+	COUT << "FLAGG " << _fmultiform << ENDL;
+	COUT << "SERVER NAME  " << _server_name << ENDL;
 }
 
 short Request::errorCode()
@@ -277,7 +278,7 @@ void Request::clear()
 	_fbody_done = false;
 	_fcompete = false;
 	_fchunked = false;
-	_flag = false;
+	_fmultiform = false;
 }
 
 bool Request::keepAlive()

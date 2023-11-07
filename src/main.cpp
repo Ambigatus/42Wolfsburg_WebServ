@@ -32,9 +32,11 @@
 int main()
 {
 	char requestData[] = "GET /index.html HTTP/1.1\r\n"
-						"Host: www.example.com\r\n"
-						"User-Agent: MyUserAgent\r\n"
-						"Accept: text/html\r\n"
+						"host: www.example.com\r\n"
+						"user-Agent: MyUserAgent\r\n"
+						"accept: text/html\r\n"
+						"content-length: 6372\r\n"
+						"content-type: text/html\r\n"
 						"\r\n"
 						"This is the HTTP request body.";
 

@@ -116,7 +116,7 @@ class Request
 		bool				_fbody_done;
 		bool				_fcompete;
 		bool				_fchunked;
-		bool				_flag;
+		bool				_fmultiform;
 
 		void				_handleHeaders();
 };

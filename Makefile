@@ -15,6 +15,9 @@ SRC =		src/main.cpp \
 			src/ServerConfiguration/ServerConfiguration.cpp \
 			src/ServerConfiguration/Setters.cpp \
 			src/ServerConfiguration/Validation.cpp \
+			src/RequestCopy.cpp \
+			src/RequestParser.cpp \
+			# src/Request.cpp \
 		
 HEADER =	include/Utils.hpp \
 			include/Webserv.hpp \
@@ -25,6 +28,7 @@ HEADER =	include/Utils.hpp \
 			include/ConfigurationParser.hpp \
 			include/Logger.hpp \
 			include/ServerConfiguration.hpp \
+			include/Request.hpp \
 
 OBJ = $(SRC:.cpp=.o)
 

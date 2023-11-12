@@ -17,6 +17,7 @@ SRC =		src/main.cpp \
 			src/ServerConfiguration/Validation.cpp \
 			src/RequestCopy.cpp \
 			src/RequestParser.cpp \
+			src/Mime.cpp \
 			# src/Request.cpp \
 		
 HEADER =	include/Utils.hpp \
@@ -29,6 +30,7 @@ HEADER =	include/Utils.hpp \
 			include/Logger.hpp \
 			include/ServerConfiguration.hpp \
 			include/Request.hpp \
+			src/Mime.hpp \
 
 OBJ = $(SRC:.cpp=.o)
 

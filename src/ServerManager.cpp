@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/07 17:43:38 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/12 19:43:13 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ ServerManager::ServerManager(){}
 ~ServerManager::ServerManager(){}
 
 //start all servers on ports, what specified in the config file
-void    ServerManager::setupServers(std::vector<ServerConfig> _servers_config){
+void    ServerManager::setupServers(std::vector<ServerConfig> servers_config){
 
 
 /*part for listen fd, we can delete if we use var from ServerConfig Class!*/
@@ -26,6 +26,33 @@ void    ServerManager::setupServers(std::vector<ServerConfig> _servers_config){
         // Also, add the server configuration to the _servers vector.
         _servers.push_back(serverConfig);
 /*end of this part*/
+
+
+	std::cerr << "Start Webserver..." << std::endl;
+	_servers = servers_config;
+	char	buffer[INET_ADDRSTRLEN];
+	/*check if we have server duplicates or not*/
+	bool	flag;
+	std::vector<ServerConfig>::iterator it = _servers.begin();
+	while (it != _servers.end())
+	{
+		flag = false;
+		std::vector<ServerConfig>::iterator it2 = _servers.begin();
+		
+		while(it2 != it)
+		{
+			if (it2->getHost() == it->getHost() && it2->getPort() == it->getPort())
+			{
+				it->setFd(it2->getFd());
+				flag = true;
+			}
+			if (!flag)
+				it->serverSetup();
+			std::cerr << "Server created..." << std::endl;
+			++it2;
+		}
+		++it;
+	}
 }
 
 
@@ -254,7 +281,7 @@ void	ServerManager::assignServer(Client &client)
 		/*comparing the properties of the client's connection (host and port) 
 		and the requested server name with the properties defined in a server configuration*/
 		if (client.server.getHost() == it->getHost() && \
-			client.server.getPort() == it->getPort() && \ 
+			client.server.getPort() == it->getPort() && \
 			client.request.getServerName() == it->getServerName())
 			{
 				client.setServer(*it);

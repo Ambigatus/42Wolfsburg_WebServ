@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:45:02 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/07 16:59:32 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/12 19:12:00 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ class Client
 		
 	//methods
 		//build Response
-		//method update for time
-		//clear Client
+		void	updateTime();//method update for time
+		void	clearClient();//clear Client
 	
 }
 

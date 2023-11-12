@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:46:04 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/07 17:00:43 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/12 19:14:22 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,4 +89,16 @@ void    Client::setIp(sockaddr_in &ip)
 void    Client::setServer(ServerConfig &server)
 {
     //we need response for that!
+}
+
+//other methods
+void    Client::updateTime()
+{
+    _last_msg_time = time(NULL);
+}
+
+void    Client::clearClient()
+{
+    //clear response
+    request.clear();
 }

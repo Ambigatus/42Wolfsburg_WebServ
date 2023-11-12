@@ -337,564 +337,119 @@ bool Request::isToken(u_int8_t ch)
 
 void Request::feed(char *data, size_t size)
 {
-	u_int8_t character;
-	static std::stringstream s;
-
 	for (size_t i = 0; i < size; ++i)
 	{
-		character = data[i];
-		switch(_state)
+		u_int8_t character = data[i];
+
+		switch (_state)
 		{
 			case Request_Line:
-			{
-				if (character == 'G')
-					_method = GET;
-				else if (character == 'P')
-				{
-					_state = Request_Line_Post_Put;
-					break;
-				}
-				else if (character == 'D')
-					_method = DELETE;
-				else if (character == 'H')
-					_method = HEAD;
-				else
-				{
-					_err_code = 501;
-					COUT << "Method Error Reques_Line and Character is = " << character << ENDL;
-					return ;
-				}
-				_state = Request_Line_Method;
+				parseRequestLine(character);
 				break;
-			}
-
 			case Request_Line_Post_Put:
-			{
-				if (character == 'O')
-					_method = POST;
-				else if (character == 'U')
-					_method = PUT;
-				else
-				{
-					_err_code = 501;
-					COUT << "Method Error Reques_Line and Character is = " << character << ENDL;
-					return ;
-				}
-				_method_index++;
-				_state = Request_Line_Method;
+				parseRequestLinePostPut(character);
 				break;
-			}
-
 			case Request_Line_Method:
-			{
-				if (character == _method_str[_method][_method_index])
-					_method_index++;
-				else
-				{
-					_err_code = 501;
-					COUT << "Method Error Reques_Line and Character is = " << character << ENDL;
-					return ;
-				}
-
-				if ((size_t) _method_index == _method_str[_method].length())
-					_state = Request_Line_Space;
+				parseRequestLineMethod(character);
 				break;
-			}
-
 			case Request_Line_Space:
-			{
-				if (character != ' ')
-				{
-					_err_code = 400;
-					COUT << "Request_Line_First_Space Error: Bad Character" << ENDL;
-					return ;
-				}
-				_state = Request_Line_URI_Path_Slash;
-				continue ;
-			}
-
+				parseRequestLineFirstSpace(character);
+				break;
 			case Request_Line_URI_Path_Slash:
-			{
-				if (character == '/')
-				{
-					_state = Request_Line_URI_Path;
-					_storage.clear();
-				}
-				else
-				{
-					_err_code = 501;
-					COUT << "Method Error Reques_Line and Character is = " << character << ENDL;
-					return ;
-				}
-				break ;
-			}
-
+				parseRequestLineURIPathSlash(character);
+				break;
 			case Request_Line_URI_Path:
-			{
-				if (character == ' ')
-				{
-					_state = Request_Line_Ver;
-					_path.append(_storage);
-					_storage.clear();
-					continue ;
-				}
-				else if (character == '?')
-				{
-					_state = Request_Line_URI_Query;
-					_path.append(_storage);
-					_storage.clear();
-					continue ;
-				}
-				else if (character == '#')
-				{
-					_state = Request_Line_URI_Fragment;
-					_path.append(_storage);
-					_storage.clear();
-					continue ;
-				}
-				else if (!allowedCharURI(character))
-				{
-					_err_code = 400;
-					COUT << "Request_Line_URI_Path Error: Bad character" << ENDL;
-					return ;
-				}
-				else if (i > MAX_URI_LENGTH)
-				{
-					_err_code = 414;
-					COUT << "Request_Line_URI_Path Error: URI Too long" << ENDL;
-					return ;
-				}
-				break ;
-			}
-
+				parseRequestLineURIPath(character, i);
+				break;
 			case Request_Line_URI_Query:
-			{
-				if (character == ' ')
-				{
-					_state = Request_Line_Ver;
-					_query.append(_storage);
-					_storage.clear();
-					continue ;
-				}
-				else if (character == '#')
-				{
-					_state = Request_Line_URI_Fragment;
-					_path.append(_storage);
-					_storage.clear();
-					continue ;
-				}
-				else if (!allowedCharURI(character))
-				{
-					_err_code = 400;
-					COUT << "Request_Line_URI_Query Error: Bad character" << ENDL;
-					return ;
-				}
-				else if (i > MAX_URI_LENGTH)
-				{
-					_err_code = 414;
-					COUT << "Request_Line_URI_Path Error: URI Too long" << ENDL;
-					return ;
-				}
-				break ;
-			}
-
+				parseRequestLineURIQuery(character, i);
+				break;
 			case Request_Line_URI_Fragment:
-			{
-				if (character == ' ')
-				{
-					_state = Request_Line_Ver;
-					_query.append(_storage);
-					_storage.clear();
-					continue ;
-				}
-				else if (!allowedCharURI(character))
-				{
-					_err_code = 400;
-					COUT << "Request_Line_URI_Fragment Error: Bad character" << ENDL;
-					return ;
-				}
-				else if (i > MAX_URI_LENGTH)
-				{
-					_err_code = 414;
-					COUT << "Request_Line_URI_Path Error: URI Too long" << ENDL;
-					return ;
-				}
-				break ;
-			}
-
+				parseRequestLineURIFragment(character, i);
+				break;
 			case Request_Line_Ver:
-			{
-				if (checkURIPos(_path))
-				{
-					_err_code = 400;
-					COUT << "Request_URI_ERROR: goes before root" << ENDL;
-					return ;
-				}
-				if (character != 'H')
-				{
-					_err_code = 400;
-					COUT << "Request_Line_Ver Error: Bad Character" << ENDL;
-					return ;
-				}
-				_state = Request_Line_HT;
-				break ;
-			}
-
+				parseRequestLineVer(character);
+				break;
 			case Request_Line_HT:
-			{
-				if (character != 'T')
-				{
-					_err_code = 400;
-					COUT << "Request_Line_HT: Bad Character" << ENDL;
-					return ;
-				}
-				_state = Request_Line_HTT;
-				break ;
-			}
-
+				parseRequestLineHT(character);
+				break;
 			case Request_Line_HTT:
-			{
-				if (character != 'T')
-				{
-					_err_code = 400;
-					COUT << "Request_Line_HTT: Bad Character" << ENDL;
-					return ;
-				}
-				_state = Request_Line_HTTP;
-				break ;
-			}
-
+				parseRequestLineHTT(character);
+				break;
 			case Request_Line_HTTP:
-			{
-				if (character != 'P')
-				{
-					_err_code = 400;
-					COUT << "Request_Line_HTTP: Bad Character" << ENDL;
-					return ;
-				}
-				_state = Request_Line_HTTP_Slash;
-				break ;
-			}
-
+				parseRequestLineHTTP(character);
+				break;
 			case Request_Line_HTTP_Slash:
-			{
-				if (character != '/')
-				{
-					_err_code = 400;
-					COUT << "Request_Line_HTTP_Slash: Bad Character" << ENDL;
-					return ;
-				}
-				_state = Request_Line_Major;
-				break ;
-			}
-
+				parseRequestLineHTTPSlash(character);
+				break;
 			case Request_Line_Major:
-			{
-				if (!isdigit(character))
-				{
-					_err_code = 400;
-					COUT << "Request_Line_Major: Bad Character" << ENDL;
-					return ;
-				}
-				_ver_major = character;
-
-				_state = Request_Line_Dot;
+				parseRequestLineMajor(character);
 				break;
-			}
-
 			case Request_Line_Dot:
-			{
-				if(character != '.')
-				{
-					_err_code = 400;
-					COUT << "Request_Line_Dot: Bad Character" << ENDL;
-					return ;
-				}
-				_state = Request_Line_Minor;
+				parseRequestLineDot(character);
 				break;
-			}
-
 			case Request_Line_Minor:
-			{
-				if (!isdigit(character))
-				{
-					_err_code = 400;
-					COUT << "Request_Line_Minor: Bad character" << ENDL;
-					return ;
-				}
-				_ver_minor = character;
-				_state = Request_Line_CR;
-				break ;
-			}
-
-			case Request_Line_CR:
-			{
-				if (character != '\r')
-				{
-					_err_code = 400;
-					COUT << "Request_Line_CR: Bad Character" << ENDL;
-					return ; 
-				}
-				_state = Request_Line_LF;
-				break ;
-			}
-
-			case Request_Line_LF:
-			{
-				if (character != '\n')
-				{
-					_err_code =  400;
-					COUT << "Request_Line_LF Error: Bad Character" << ENDL;
-					return ;
-				}
-				_state = Name_Start;
-				_storage.clear();
-				continue ;
-			}
-
-			case Name_Start:
-			{
-				if (character == '\r')
-					_state = Name_End;
-				else if (isToken(character))
-					_state = Name;
-				else
-				{
-					_err_code = 400;
-					COUT << "Name_Start Error: Bad character" << ENDL;
-					return ;
-				}
-				break ;
-			}
-
-			case Name_End:
-			{
-				if (character == '\n')
-				{
-					_storage.clear();
-					_fields_done = true;
-					_handleHeaders();
-
-					if (_fbody == 1)
-					{
-						if (_fchunked == true)
-							_state = Chunked_Len_Begin;
-						else
-							_state = Message_Body;
-					}
-					else
-						_state = Parsing_Done;
-					continue;
-				}
-				else
-				{
-					_err_code = 400;
-					COUT << "Name_End Error: BAd character" << ENDL;
-					return ;
-				}
-				break ;
-			}
-
-			case Name:
-			{
-				if (character == ':')
-				{
-					_key_storage = _storage;
-					_storage.clear();
-					_state = Value;
-					continue ;
-				}
-				else if (!isToken(character))
-				{
-					_err_code = 400;
-					COUT << "Name Error: Bad character" << ENDL;
-					return ;
-				}
-				break ;
-			}
-
-			case Value:
-			{
-				if (character == '\r')
-				{
-					setHeader(_key_storage, _storage);
-					_key_storage.clear();
-					_storage.clear();
-					_state = Value_End;
-					continue ;
-				}
+				parseRequestLineMinor(character);
 				break;
-			}
-
+			case Request_Line_CR:
+				parseRequestLineCR(character);
+				break;
+			case Request_Line_LF:
+				parseRequestLineLF(character);
+				break;
+			case Name_Start:
+				parseNameStart(character);
+				break;
+			case Name_End:
+				parseNameEnd(character);
+				break;
+			case Name:
+				parseName(character);
+				break;
+			case Value:
+				parseValue(character);
+				break;
 			case Value_End:
-			{
-				if (character == '\n')
-				{
-					_state = Name_Start;
-					continue ;
-				}
-				else
-				{
-					_err_code = 400;
-					COUT << "Value End Error: Bad Character" << ENDL;
-					return ;
-				}
-				break ;
-			}
-
+				parseValueEnd(character);
+				break;
 			case Chunked_Len_Begin:
-			{
-				if (isxdigit(character) == 0)
-				{
-					_err_code = 400;
-					COUT << "Chunked_Len_Begin Error: Bad character" << ENDL;
-					return ;
-				}
-				s.str("");
-				s.clear();
-				s << character;
-				s >> HEX >> _chunk_len;
-				if (_chunk_len == 0)
-					_state = Chunked_Len_CR;
-				else
-					_state = Chunked_Len;
-				continue ;
-			}
-
+				parseChunkedLengthBegin(character);
+				break;
 			case Chunked_Len:
-			{
-				if (isxdigit(character) != 0)
-				{
-					int temp_len = 0;
-					s.str("");
-					s.clear();
-					s << character;
-					s >> HEX >> temp_len;
-					_chunk_len *= 16;
-					_chunk_len += temp_len;
-				}
-				else if (character == '\r')
-					_state = Chunked_Len_LF;
-				else
-					_state = Chunked_Ignore;
-				continue ;
-			}
-
+				parseChunkedLength(character);
+				break;
 			case Chunked_Len_CR:
-			{
-				if ( character == '\r')
-					_state = Chunked_Len_LF;
-				else
-				{
-					_err_code = 400;
-					COUT << "Bad Character (Chunked_Length_CR)" << ENDL;
-					return ;
-				}
-				continue ;
-			}
-
+				parseChunkedLengthCR(character);
+				break;
 			case Chunked_Len_LF:
-			{
-				if (character == '\n')
-				{
-					if (_chunk_len == 0)
-						_state = Chunked_End_CR;
-					else
-						_state = Chunked_Data;
-				}
-				else
-				{
-					_err_code = 400;
-					COUT << "Chunked_Len_LF Error: Bad character" << ENDL;
-					return ;
-				}
-				continue ;
-			}
-
+				parseChunkedLengthLF(character);
+				break;
 			case Chunked_Ignore:
-			{
-				if (character == '\r')
-					_state = Chunked_Len_LF;
-				continue ;
-			}
-		
+				parseChunkedIgnore(character);
+				break;
 			case Chunked_Data:
-			{
-				_body.push_back(character);
-				--_chunk_len;
-				if (_chunk_len == 0)
-					_state = Chunked_Data_CR;
-				continue ;
-			}
-
+				parseChunkedData(character);
+				break;
 			case Chunked_Data_CR:
-			{
-				if (character == '\r')
-					_state = Chunked_Data_LF;
-				else
-				{
-					_err_code = 400;
-					COUT << "Chunked_Data_CR Error: Bad character" << ENDL;
-					return ;
-				}
-				continue ;
-			}
-
+				parseChunkedDataCR(character);
+				break;
 			case Chunked_Data_LF:
-			{
-				if (character == '\n')
-					_state = Chunked_Len_Begin;
-				else
-				{
-					_err_code = 400;
-					COUT << "Chunked_End_CR Error: Bad Character" << ENDL;
-					return ;
-				}
-				continue ;
-			}
-
+				parseChunkedDataLF(character);
+				break;
 			case Chunked_End_CR:
-			{
-				if (character != '\r')
-				{
-					_err_code = 400;
-					COUT << "Chunked_End_CR Error: Bad character" << ENDL;
-					return ;
-				}
-				_state = Chunked_End_LF;
-				continue ;
-			}
-
+				parseChunkedEndCR(character);
+				break;
 			case Chunked_End_LF:
-			{
-				if (character != '\n')
-				{
-					_err_code = 400;
-					COUT << "Chunked_End_LF Error: Bad character" << ENDL;
-					return ;
-				}
-				_fbody_done = true;
-				_state = Parsing_Done;
-				continue ;
-			}
-			
+				parseChunkedEndLF(character);
+				break;
 			case Message_Body:
-			{
-				if (_body.size() < _body_len)
-					_body.push_back(character);
-				if (_body.size() == _body_len)
-				{
-					_fbody_done = true;
-					_state = Parsing_Done;
-				}
-				break ;
-			}
+				parseMessageBody(character);
+				break;
 			case Parsing_Done:
-			{
-				return ;
-			}
+				return;
 		}
-		_storage += character;
+
+		// _storage += character;
 	}
 	if (_state == Parsing_Done)
 	{

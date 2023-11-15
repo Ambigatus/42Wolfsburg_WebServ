@@ -89,6 +89,41 @@ class Request
 		bool		allowedCharURI(u_int8_t ch);
 		bool		isToken(u_int8_t ch);
 
+		void				parseRequestLine(u_int8_t character);
+		void				parseRequestLinePostPut(u_int8_t character);
+		void				parseRequestLineMethod(u_int8_t character);
+		void				parseRequestLineFirstSpace(u_int8_t character);
+		void				parseRequestLineURIPathSlash(u_int8_t character);
+		void				parseRequestLineURIPath(u_int8_t character, size_t i);
+		void				parseRequestLineURIQuery(u_int8_t character, size_t i);
+		void				parseRequestLineURIFragment(u_int8_t character, size_t i);
+		void				parseRequestLineVer(u_int8_t character);
+		void				parseRequestLineHT(u_int8_t character);
+		void				parseRequestLineHTT(u_int8_t character);
+		void				parseRequestLineHTTP(u_int8_t character);
+		void				parseRequestLineHTTPSlash(u_int8_t character);
+		void				parseRequestLineMajor(u_int8_t character);
+		void				parseRequestLineDot(u_int8_t character);
+		void				parseRequestLineMinor(u_int8_t character);
+		void				parseRequestLineCR(u_int8_t character);
+		void				parseRequestLineLF(u_int8_t character);
+		void				parseNameStart(u_int8_t character);
+		void				parseNameEnd(u_int8_t character);
+		void				parseName(u_int8_t character);
+		void				parseValue(u_int8_t character);
+		void				parseValueEnd(u_int8_t character);
+		void				parseChunkedLengthBegin(u_int8_t character);
+		void				parseChunkedLength(u_int8_t character);
+		void				parseChunkedLengthCR(u_int8_t character);
+		void				parseChunkedLengthLF(u_int8_t character);
+		void				parseChunkedIgnore(u_int8_t character);
+		void				parseChunkedData(u_int8_t character);
+		void				parseChunkedDataCR(u_int8_t character);
+		void				parseChunkedEndCR(u_int8_t character);
+		void				parseChunkedDataLF(u_int8_t character);
+		void				parseChunkedEndLF(u_int8_t character);
+		void				parseMessageBody(u_int8_t character);
+
 	private:
 		STR					_path;
 		STR 				_query;

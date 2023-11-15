@@ -3,6 +3,7 @@
 
 #include "Webserv.hpp"//libraries
 #include "Client.hpp"//all data for Client part
+#include "Response.hpp"//all data for Response part
 
 
 //class for init server
@@ -28,6 +29,9 @@ class ServerManager
 		int getListenFd(int serverId);
 	/*end of this part*/
 
+		fd_set	_read_fds; // sockets that the server is interested in for reading
+		fd_set	_write_fds; // sockets that the server is interested in for writing
+
 	//methods
 		/* init two sets for listening requests(reading and writing FDs)*/
 		void	initializeFdsSets();
@@ -37,6 +41,10 @@ class ServerManager
 		void	readRequest(const int &, Client &);
 		void	assignServer(Client &);
 		void	checkTimeout();
+		void	sendResponse(const int &, Client &);
+		/*CGI part*/
+		void	sendCgiBody(Client &, CgiHandler &);
+		void	readCgiResponse(Client &, CgiHandler &);
 
 		void	closeConnection(const int);
 

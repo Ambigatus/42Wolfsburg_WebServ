@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/12 19:43:13 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/15 19:56:51 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void	ServerManager::startServers()
 	int num_ready_fds; // the number of file descriptors that are ready for reading or writing
 	int	select_response;//select() answer
 	int i;//for counting fds
+	int	cgi_state;
 	_max_fd = 0;
 	
 	initializeFdsSets();
@@ -93,12 +94,17 @@ void	ServerManager::startServers()
 				readRequest(i, _clients_map[i]);
 			else if (FD_ISSET(i, &write_fds) && _clients_map.count(i))
 			{
-				//cgi part
+				//check this part with new data!
+				// cgi_state = _clients_map[i].response.getCgiState(); // 0->NoCGI 1->CGI 
+				// if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_obj.pipe_in[1],&write_fds))
+				// 	sendCgiBody(_clients_map[i], _clients_map[i].response._cgi_obj);
+				// else if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_obj.pipe_out[0], &read_fds))
+				// 	readCgiResponse(_clients_map[i], _clients_map[i].response._cgi_obj);
+				// else if ((cgi_state == 0 || cgi_state == 2) && FD_ISSET(i, &write_fds))
+				// 	sendResponse(i , _clients_map[i]);
 			}
-			//doesn't finished
 			i++;
 		}
-		
 	}
 	checkTimeout();
 }
@@ -307,5 +313,120 @@ void	ServerManager::checkTimeout()
 			return ;
 		}
 		++it;
+	}
+}
+
+//check this func!
+void	ServerManager::sendResponse(const int &i, Client &client)
+{
+	size_t	bytes_num;
+	std::string	response = client.response.getRes();
+	if (response.length() >= 40000)
+		bytes_num = write(i, response.c_str(), 40000)
+	else
+		bytes_num = write(i, response.c_str(), response.length());
+
+	if (bytes_num < 0)
+	{
+		std::cerr << "Error: " << "Wrong sendResponse" << std::endl;
+		closeConnection(i);
+	}
+	else if (bytes_num == 0 || bytes_num == response.length())
+	{
+		std::cerr << "Response sent" << std::endl;
+		if (client.request.keepAlive() == false || client.request.errorCode() || \
+			client.response.getCgiState())
+		{
+			std::cerr << "Error: " << "Connection closed" << std::endl;
+			closeConnection(i);
+		}
+		else
+		{
+			removeFromSet(i, _write_fds_set);
+			addToSet(i, _read_fds_set);
+			client.clearClient();
+		}
+	}
+	else
+	{
+		client.updateTime();
+		client.response.cutRes(bytes_num);
+	}
+}
+
+/*CGI part*/
+/*sent Request body to CGI script*/
+void	ServerManager::sendCgiBody(Client &client, CgiHandler &cgi)
+{
+	/*keep track of the number of bytes sent by the write system call*/
+	size_t	bytes_num;
+	std::string	&req_body = client.request.getBody();
+
+	if (req_body.length() == 0)
+		bytes_num = 0;
+	else if (req_body.length() >= 40000)
+		bytes_num = write(cgi.pipe_in[1], req_body.c_str(), 40000);
+	else
+		bytes_num = write(cgi.pipe_in[1], req_body.c_str(), req_body.length());
+
+	if (bytes_num < 0 )
+	{
+		std::cerr << "Error: " << "Something wrong with sending" << std::endl;
+		removeFromSet(cgi.pipe_in[1], _write_fds_set);
+		close(cgi.pipe_in[1]);
+		close(cgi.pipe_out[1]);
+		client.response.setErrorResponse(500);//check this line
+		
+	}
+	else if (bytes_num == 0 || bytes_num == req_body.length())
+	{
+		removeFromSet(cgi.pipe_in[1], _write_fds_set);
+		close(cgi.pipe_in[1]);
+		close(cgi.pipe_out[1]);
+	}
+	else
+	{
+		client.updateTime();
+		req_body = req_body.substr(bytes_num);
+	}
+}
+
+//check this function for new data!
+void	ServerManager::readCgiResponse(Client &client, CgiHandler &cgi)
+{
+	char	buffer[80000];
+	size_t	bytes_num;
+	int		status;
+	
+	bytes_num = read(cgi.pipe_out[0], buffer, 80000);
+	if (bytes_num == 0)
+	{
+		removeFromSet(cgi.pipe_out[0], _read_fds_set);
+		close(cgi.pipe_in[0]);
+		close(cgi.pipe_out[0]);
+		waitpid(cgi.getCgiPid(), &status, 0);
+		/*child termination status*/
+		if(WEXITSTATUS(status) != 0)
+			client.response.setErrorResponse(502);//invalid response
+		client.response.setCgiState(2);
+		if (client.response._response_content.find("HTTP/1.1") == std::string::npos)
+			client.response._response_content.insert(0, "HTTP/1.1 200 OK\r\n");
+		return ;
+	}
+	else if (bytes_num < 0)
+	{
+		std::cerr << "Error: " << "Wrong reading from CGI script" << std::endl;
+		removeFromSet(cgi.pipe_out[0], _read_fds_set);
+		close(cgi.pipe_in[0]);
+		close(cgi.pipe_out[0]);
+		client.response.setCgiState(2);
+		client.response.setErrorResponse(500);
+		return ;
+	}
+	else
+	{
+		client.updateTime();
+		client.response._response_content.append(buffer,bytes_num);
+		memset(buffer, 0, sizeof(buffer));
 	}
 }

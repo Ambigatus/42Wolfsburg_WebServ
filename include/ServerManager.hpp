@@ -39,6 +39,7 @@ class ServerManager
 		void	removeFromSet(const int , fd_set &);
 		void	getNewConnection(ServerConfig &);
 		void	readRequest(const int &, Client &);
+		void    isReqBodyEmpty(Client &);
 		void	assignServer(Client &);
 		void	checkTimeout();
 		void	sendResponse(const int &, Client &);

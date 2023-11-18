@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/15 19:56:51 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/11/18 14:07:06 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,7 @@ void    ServerManager::setupServers(std::vector<ServerConfig> servers_config){
         _servers.push_back(serverConfig);
 /*end of this part*/
 
-
-	std::cerr << "Start Webserver..." << std::endl;
+	Logger::messageLog(U_YELLOW, CONSOLE_OUTPUT, "Start Webserver...");
 	_servers = servers_config;
 	char	buffer[INET_ADDRSTRLEN];
 	/*check if we have server duplicates or not*/
@@ -48,7 +47,7 @@ void    ServerManager::setupServers(std::vector<ServerConfig> servers_config){
 			}
 			if (!flag)
 				it->serverSetup();
-			std::cerr << "Server created..." << std::endl;
+			Logger::messageLog(U_YELLOW, CONSOLE_OUTPUT, "Server created...");
 			++it2;
 		}
 		++it;
@@ -80,7 +79,7 @@ void	ServerManager::startServers()
 		 see if they are ready for reading, writing, or have encountered exceptions*/
 		if ( (select_response = select(_max_fd + 1, &read_fds, &write_fds, NULL, &timer)) < 0 )
 		{
-			std::cerr << "Error: " << "Select() error!" << std::endl;
+			Logger::messageLog(B_RED, CONSOLE_OUTPUT,  "Select() error!", strerror(errno));
             exit(1);
 			continue ;
 		}
@@ -121,15 +120,15 @@ void	ServerManager::initializeFdsSets()
 	{
 		if (listen(getListenFd(it->getId()), 512) == -1)
 		{
-			//we need logger!
-			std::cerr << "Error: " << "Problems with setting up the listening socket" << std::endl;
-    		exit(EXIT_FAILURE);
+    		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Problems with setting up the listening socket - %s", \
+								strerror(errno));
+			exit(EXIT_FAILURE);
 		}
 		/*O_NONBLOCK-flag make the file descriptor non-blocking. It means that operations
 		 on this file descriptor (like reading or writing) won't block the calling process.*/
 		if (fcntl(getListenFd(it->getId()), F_SETFL, O_NONBLOCK) < 0)
         {
-            std::cerr << "Error: " << "Can't make current fd unblocked" << std::endl;
+			Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Can't make current fd %s unblocked", strerror(errno));
             exit(EXIT_FAILURE);
         }
 		addToSet(getListenFd(it->getId()), _read_fds_set);
@@ -194,17 +193,19 @@ void	ServerManager::getNewConnection(ServerConfig &server)
 				 (socklen_t*)&client_address_size);
 	if (client_socket == -1)
 	{
-		std::cerr << "Error: " << "Accept error" << std::endl;
+		std::cerr << "Error: " <<  << std::endl;
+		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Accept error %s", strerror(errno));
 		return ;
 	}
-	std::cout << "New connection!" << std::endl;
+	std::cout <<  << std::endl;
+	Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "New connection!");
 
 	addToSet(client_socket, _read_fds_set);
 	
 	/*makes socket unblocked*/
 	if (fcntl(client_socket, F_SETFL, O_NONBLOCK) < 0)
 	{
-		std::cerr << "Error: " << "Fcntl error" << std::endl;
+		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Fcntl error with %s", strerror(errno));
 		removeFromSet(client_socket, _read_fds_set);
 		close(client_socket);
 		return ;
@@ -232,13 +233,13 @@ void	Client::readRequest(const int &i, Client &client)
 	bytes_read = read(i, buffer, 40000);
 	if (bytes_read == 0)
 	{
-		std::cerr << "Error: " << "Closed connection" << std::endl;
+		Logger::messageLog(B_PINK, CONSOLE_OUTPUT, "Closed connection %d", i);
 		closeConnection(i);
 		return ;
 	}
 	else if (bytes_read < 0)
 	{
-		std::cerr << "Error: " << "Read problems" << std::endl;
+		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Read problems %d. Error: %s", i, strerror(errno));
 		closeConnection(i);
 		return ;
 	}
@@ -257,12 +258,19 @@ void	Client::readRequest(const int &i, Client &client)
 	if (client.request.parsingDone() || client.request.errorCode())
 	{
 		assignServer(client);
-		std::cerr << "Request recived!" << std::endl;
+		std::cerr <<  << std::endl;
+		Logger::messageLog(B_TURQUOISE, CONSOLE_OUTPUT, "Request recived!" );
+		//discomment this part!
 		// client.buildResponse();
-		//add Response part and update Fds sets
-		
+		// if (client.response.getCgiState())
+		// {
+		// 	isReqBodyEmpty(client);
+		// 	addToSet(client.response._cgi_obj.pipe_in[1], _write_fds_set);
+		// 	addToSet(client.response._cgi_obj.pipe_out[0], _read_fds_set);
+		// }
+		removeFromSet(i, _read_fds_set);
+		addToSet(i, _write_fds_set);
 	}
-	//doesn't finished
 }
 
 /*closes the connection with the file descriptor 'i' and removes 
@@ -308,7 +316,7 @@ void	ServerManager::checkTimeout()
 		/*after 60 seconds we will clean the data*/
 		if (time(NULL) - it->second.getLastTime() > CONNECTION_TIMEOUT)
 		{
-			std::cerr << "Error: " << "Timeout. Closing connection" << std::endl;
+			Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "Timeout %d. Closing connection", it->first);
 			closeConnection(it->first);
 			return ;
 		}
@@ -328,16 +336,16 @@ void	ServerManager::sendResponse(const int &i, Client &client)
 
 	if (bytes_num < 0)
 	{
-		std::cerr << "Error: " << "Wrong sendResponse" << std::endl;
+		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Wrong sendResponse %s", strerror(errno));
 		closeConnection(i);
 	}
 	else if (bytes_num == 0 || bytes_num == response.length())
 	{
-		std::cerr << "Response sent" << std::endl;
+		Logger::messageLog(B_TURQUOISE, CONSOLE_OUTPUT, "Response sent");
 		if (client.request.keepAlive() == false || client.request.errorCode() || \
 			client.response.getCgiState())
 		{
-			std::cerr << "Error: " << "Connection closed" << std::endl;
+			Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "Connection closed %d", i);
 			closeConnection(i);
 		}
 		else
@@ -371,7 +379,7 @@ void	ServerManager::sendCgiBody(Client &client, CgiHandler &cgi)
 
 	if (bytes_num < 0 )
 	{
-		std::cerr << "Error: " << "Something wrong with sending" << std::endl;
+		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Something wrong with sending %s", strerror(errno));
 		removeFromSet(cgi.pipe_in[1], _write_fds_set);
 		close(cgi.pipe_in[1]);
 		close(cgi.pipe_out[1]);
@@ -415,7 +423,7 @@ void	ServerManager::readCgiResponse(Client &client, CgiHandler &cgi)
 	}
 	else if (bytes_num < 0)
 	{
-		std::cerr << "Error: " << "Wrong reading from CGI script" << std::endl;
+		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Wrong reading from CGI script: %s", strerror(errno));
 		removeFromSet(cgi.pipe_out[0], _read_fds_set);
 		close(cgi.pipe_in[0]);
 		close(cgi.pipe_out[0]);
@@ -428,5 +436,21 @@ void	ServerManager::readCgiResponse(Client &client, CgiHandler &cgi)
 		client.updateTime();
 		client.response._response_content.append(buffer,bytes_num);
 		memset(buffer, 0, sizeof(buffer));
+	}
+}
+
+void    ServerManager::isReqBodyEmpty(Client &client)
+{
+	std::string			tmp;
+	std::fstream		file;
+	std::stringstream	string_stream;
+	
+	if (client.request.getBody().length() == 0)
+	{
+		file(client.response._cgi_obj.getCgiPath().c_str());
+		string_stream << file.rdbuf();
+		tmp = string_stream.str();
+		client.request.setBody(tmp);
+		
 	}
 }

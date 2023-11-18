@@ -120,7 +120,7 @@ void	CGIConfig::envInitializatation(HTTPRequest &request, const VECTOR<Location>
 	STR			extension_path;
 
 	extension = this->_cgi_path.substr(this->_cgi_path.find("."));
-	// MAP<STR, STR>::iterator iter_path = iter_loc->_ext_path.find(extension); finish after making Location
+	MAP<STR, STR>::ite
 }
 
 void	CGIConfig::execute(short &error_code)

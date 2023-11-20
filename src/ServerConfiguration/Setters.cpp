@@ -125,4 +125,151 @@ void	ServerConfiguration::setErrorPages(VECTOR<STR> &param)
 	}
 }
 
-//setLocation here
+void    ServerConfiguration::setLocation(STR path, VECTOR<STR> param)
+{
+    Location        new_location;
+    VECTOR<STR>     methods;
+    bool            flag_methods = false;
+    bool            flag_autoindex = false;
+    bool            flag_max_size = false;
+    int             validation;
+
+    new_location.setPath(path);
+    for (size_t i = 0; i < param.size(); i++)
+    {
+        if (param[i] == "root" && (i + 1) < param.size())
+        {
+            if (!new_location.getRootLocation().empty())
+                throw ErrorExeption("ERROR: Root of location is duplicated.");
+            validationToken(param[++i]);
+            if (ConfigurationFile::getTypePath(param[i]) == 2)
+                new_location.setRootLocation(param[i]);
+            else
+                new_location.setRootLocation(this->_root + param[i]);
+        }
+        else if ((param[i] == "allow_methods" || param[i] == "methods") && (i + 1) < param.size())
+        {
+            if (flag_methods)
+                throw ErrorExeption("ERROR: Allow methods of location is duplicated.");
+            VECTOR<STR> methods;
+            while (++i < param.size())
+            {
+                if (param[i].find(";") != STR::npos)
+                {
+                    validationToken(param[i]);
+                    methods.push_back(param[i]);
+                    break;
+                }
+                else
+                {
+                    methods.push_back(param[i]);
+                    if (i + 1 >= param.size())
+                        throw ErrorExeption("ERROR: Token is invalid.");
+                }
+            }
+            new_location.setMethods(methods);
+            flag_methods = true;
+        }
+        else if (param[i] == "autoindex" && (i + 1) < param.size())
+        {
+            if (path == "/cgi-bin")
+                throw ErrorExeption("ERROR: Parameter 'autoindex' is not allowed for CGI.");
+            if (flag_autoindex)
+                throw ErrorExeption("ERROR: Autoindex of location is duplicated.");
+            validationToken(param[++i]);
+            new_location.setAutoIndex(param[i]);
+            flag_autoindex = true;
+        }
+        else if (param[i] == "index" && (i + 1) < param.size())
+        {
+            if (!new_location.getIndexLocation().empty())
+                throw ErrorExeption("ERROR: Index of location is duplicated.");
+            validationToken(param[++i]);
+            new_location.setIndexLocation(param[i]);
+        }
+        else if (param[i] == "return" && (i + 1) < param.size())
+        {
+            if (path == "/cgi-bin")
+                throw ErrorExeption("ERROR: Parameter 'return' is not allowed for CGI.");
+            if (!new_location.getReturn().empty())
+                throw ErrorExeption("ERROR: Return of location is duplicated.");
+            validationToken(param[++i]);
+            new_location.setReturn(param[i]);
+        }
+        else if (param[i] == "alias" && (i + 1) < param.size())
+        {
+            if (path == "/cgi-bin")
+                throw ErrorExeption("ERROR: Parameter 'alias' is not allowed for CGI.");
+            if(!new_location.getAlias().empty())
+                throw ErrorExeption("ERROR: Alias of location is duplicated");
+            validationToken(param[++i]);
+            new_location.setAlias(param[i]);
+        }
+        else if (param[i] == "cgi_ext" && (i + 1) < param.size())
+        {
+            VECTOR<STR> extension;
+            while (++i < param.size())
+            {
+                if (param[i].find(";") != STR::npos)
+                {
+                    validationToken(param[i]);
+                    extension.push_back(param[i]);
+                    break;
+                }
+                else
+                {
+                    extension.push_back(param[i]);
+                    if (i + 1 >= param.size())
+                        throw ErrorExeption("ERROR: Token is invalid.");
+                }
+            }
+            new_location.setCGIExtension(extension);
+        }
+        else if (param[i] == "cgi_path" && (i + 1) < param.size())
+        {
+            VECTOR<STR> path;
+            while (++i < param.size())
+            {
+                if (param[i].find(";") != STR::npos)
+                {
+                    validationToken(param[i]);
+                    path.push_back(param[i]);
+                    break;
+                }
+                else
+                {
+                    path.push_back(param[i]);
+                    if (i + 1 >= param.size())
+                        throw ErrorExeption("ERROR: Token is invalid.");
+                }
+                if (param[i].find("/python") == STR::npos && param[i].find("/bash") == STR::npos)
+                    throw ErrorExeption("ERROR: CGI path is invalid.");
+            }
+            new_location.setCGIPath(path);
+        }
+        else if (param[i] == "client_max_body_size" && (i + 1) < param.size())
+        {
+            if (flag_max_size)
+                throw ErrorExeption("ERROR: Max body size is duplicated.");
+            validationToken(param[++i]);
+            new_location.setMaxBodySize(param[i]);
+            flag_max_size = true;
+        }
+        else if (i < param.size())
+            throw ErrorExeption("ERROR: Parameter in the location is invalid.");
+    }
+    if (new_location.getPath() != "/cgi-bin" && new_location.getIndexLocation().empty())
+        new_location.setIndexLocation(this->_index);
+    if (!flag_max_size)
+        new_location.setMaxBodySize(this->_client_max_body_size);
+    validation = checkLocationValid(new_location);
+    if (validation == 1)
+        throw ErrorExeption("ERROR: Failed CGI validation.");
+    else if (validation == 2)
+        throw ErrorExeption("ERROR: Failed path in location validation.");
+    else if (validation == 3)
+        throw ErrorExeption("ERROR: Failed redirection file in location validation.");
+    else if (validation == 4)
+        throw ErrorExeption("ERROR: Failed alias file in location validation.");
+    this->_locations.push_back(new_location);
+}

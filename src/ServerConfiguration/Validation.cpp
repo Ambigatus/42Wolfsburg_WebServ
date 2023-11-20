@@ -44,6 +44,70 @@ int	ServerConfiguration::checkLocationValid(Location &location) const
 {
 	if (location.getPath() == "/cgi-bin")
 	{
-		//need here CGI handler
+		if (location.getCGIPath().empty() || location.getCGIExtension().empty() || location.getIndexLocation().empty())
+            return 1;
+        if (ConfigurationFile::checkConfigFile(location.getIndexLocation(), 4) < 0)
+        {
+            STR path = location.getRootLocation() + location.getPath() + "/" + location.getIndexLocation();
+            if (ConfigurationFile::getTypePath(path) != 1)
+            {
+                STR root = getcwd(NULL, 0);
+                location.setRootLocation(root);
+                path = root + location.getPath() + "/" + location.getIndexLocation();
+            }
+            if (path.empty() || ConfigurationFile::getTypePath(path) != 1 || ConfigurationFile::checkConfigFile(path, 4) < 0)
+                return 1;
+        }
+        if (location.getCGIPath().size() != location.getCGIExtension().size())
+            return 1;
+        VECTOR<STR>::const_iterator iter;
+        for (iter = location.getCGIPath().begin(); iter != location.getCGIPath().end(); iter++)
+        {
+            if (ConfigurationFile::getTypePath(*iter) < 0)
+                return 1;
+        }
+        VECTOR<STR>::const_iterator path_iter;
+        for (iter = location.getCGIExtension().begin(); iter != location.getCGIExtension().end(); ++iter)
+        {
+            STR temp = *iter;
+            if (temp != ".py" && temp != ".sh" && temp != "*.py" && temp != "*.sh")
+                return 1;
+            for (path_iter = location.getCGIPath().begin(); path_iter != location.getCGIPath().end(); ++path_iter)
+            {
+                STR path_temp = *path_iter;
+                if (temp == ".py" || temp == "*.py")
+                {
+                    if (path_temp.find("python") != STR::npos)
+                        location._exten_path.insert(std::make_pair(".py", path_temp));
+                }
+                else if (temp == ".sh" || temp == "*.sh")
+                {
+                    if (path_temp.find("bash") != STR::npos)
+                        location._exten_path[".sh"] = path_temp;
+                }
+            }
+        }
+        if (location.getCGIPath().size() != location.getExtensionPath().size())
+            return 1;
 	}
+    else
+    {
+        if (location.getPath()[0] != '/')
+            return 2;
+        if (location.getRootLocation().empty())
+            location.setRootLocation(this->_root);
+        if (ConfigurationFile::checkIsFileReadable(location.getRootLocation() + location.getPath() + "/", location.getIndexLocation()))
+            return 5;
+        if (!location.getReturn().empty())
+        {
+            if (ConfigurationFile::checkIsFileReadable(location.getRootLocation(), location.getReturn()))
+                return 3;
+        }
+        if (!location.getAlias().empty())
+        {
+            if (ConfigurationFile::checkIsFileReadable(location.getRootLocation(), location.getAlias()))
+                return 4;
+        }
+    }
+    return 0;
 }

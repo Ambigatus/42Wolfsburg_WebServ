@@ -1,6 +1,8 @@
 #ifndef WEBSERV_HPP
 # define WEBSERV_HPP
 
+# include "Utils.hpp"
+
 /*						Libraries section						*/
 /*						Base libraries for whole work			*/
 # include <unistd.h>
@@ -48,7 +50,6 @@
 # include "Mime.hpp"
 # include "ServerManager.hpp"
 # include "ServerConfiguration.hpp"
-# include "CGI_Configuration.hpp"
-# include "Utils.hpp"
+# include "CgiConfig.hpp"
 
 #endif

@@ -1,4 +1,4 @@
-#include "../../include/CGI_Configuration.hpp"
+#include "../../include/CgiConfig.hpp"
 
 CGIConfig::CGIConfig()
 {
@@ -59,7 +59,7 @@ CGIConfig &CGIConfig::operator=(const CGIConfig &copy)
 	return (*this);
 }
 
-void	CGIConfig::CGIEnvInitialization(HTTPRequest &request, const VECTOR<Location>::iterator iter_loc)
+void	CGIConfig::CGIEnvInitialization(Request &request, const VECTOR<Location>::iterator iter_loc)
 {
 	STR		cgi_exec = ("cgi-bin/" + iter_loc->getCGIpath()[0]).c_str();
 	char	*cwd = getcwd(NULL, 0);
@@ -113,14 +113,51 @@ void	CGIConfig::CGIEnvInitialization(HTTPRequest &request, const VECTOR<Location
 	this->_argv[2] = NULL;
 }
 
-void	CGIConfig::envInitializatation(HTTPRequest &request, const VECTOR<Location>::iterator iter_loc)
+void	CGIConfig::envInitializatation(Request &request, const VECTOR<Location>::iterator iter_loc)
 {
 	int			position;
 	STR			extension;
 	STR			extension_path;
 
 	extension = this->_cgi_path.substr(this->_cgi_path.find("."));
-	MAP<STR, STR>::ite
+    MAP<STR, STR>::iterator iter_path = iter_loc->_exten_path.find(extension);
+    if (iter_path == iter_loc->_exten_path.end())
+        return ;
+    extension_path = iter_loc->_exten_path[extension];
+
+    this->_env["AUTH_TYPE"] = "Basic";
+    this->_env["CONTENT_LENGTH"] = request.getHeader("content-length");
+    this->_env["CONTENT_TYPE"] = request.getHeader("content-type");
+    this->_env["GATEWAY_INTERFACE"] = "CGI/1.1";
+    position = startFinder(this->_cgi_path, "cgi-bin/");
+    this->_env["SCRIPT_NAME"] = this->_cgi_path;
+    this->_env["SCRIPT_FILENAME"] = ((position < 0 || (size_t)(position + 8) > this->_cgi_path.size()) ? "" : this->_cgi_path.substr(position + 8, this->_cgi_path.size()));
+    this->_env["PATH_INFO"] = getPathInfo(request.getPath(), iter_loc->getCGIExtension());
+    this->_env["PATH_TRANSLATED"] = iter_loc->getRootLocation() + (this->_env["PATH_INFO"] == "" ? "/" : this->_env["PATH_INFO"]);
+    this->_env["QUERY_STRING"] = decode(request.getQuery());
+    this->_env["REMOTE_ADDRESS"] = request.getHeader("host");
+    position = startFinder(request.getHeader("host"), ":");
+    this->_env["SERVER_NAME"] = (position > 0 ? request.getHeader("host").substr(0, position) : "");
+    this->_env["SERVER_PORT"] = (position > 0 ? request.getHeader("host").substr(position + 1, request.getHeader("host").size()) : "");
+    this->_env["REQUEST_METHOD"] = request.getMethodStr();
+    this->_env["HTTP_COOKIE"] = request.getHeader("cookie");
+    this->_env["DOCUMENT_ROOT"] = iter_loc->getRootLocation();
+    this->_env["REQUEST_URI"] = request.getPath() + request.getQuery();
+    this->_env["SERVER_PROTOCOL"] = "HTTP/1.1";
+    this->_env["REDIRECT_STATUS"] = "200";
+    this->_env["SERVER_SOFTWARE"] = "AMANIX";
+
+    this->_char_env = (char**)calloc(sizeof(char *), this->_env.size() + 1);
+    MAP<STR, STR>::const_iterator iter = this->_env.begin();
+    for (int i = 0; iter != this->_env.end(); iter++, i++)
+    {
+        STR temp = iter->first + "=" + iter->second;
+        this->_char_env[i] = strdup(temp.c_str());
+    }
+    this->_argv = (char**)malloc(sizeof(char *) * 3);
+    this->_argv[0] = strdup(extension_path.c_str());
+    this->_argv[1] = strdup(this->_cgi_path.c_str());
+    this->_argv[2] = NULL;
 }
 
 void	CGIConfig::execute(short &error_code)

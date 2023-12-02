@@ -1,8 +1,6 @@
 #ifndef WEBSERV_HPP
 # define WEBSERV_HPP
 
-# include "Utils.hpp"
-
 /*						Libraries section						*/
 /*						Base libraries for whole work			*/
 # include <unistd.h>
@@ -41,6 +39,7 @@
 #include <csignal> //used for working with signals, and the SIGPIPE
 
 /*						HPP Files								*/
+# include "Utils.hpp"
 # include "ConfigurationFile.hpp"
 # include "ConfigurationParser.hpp"
 # include "Logger.hpp"
@@ -51,5 +50,6 @@
 # include "ServerManager.hpp"
 # include "ServerConfiguration.hpp"
 # include "CgiConfig.hpp"
+
 
 #endif

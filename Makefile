@@ -4,19 +4,22 @@ SRC =		src/main.cpp \
 			src/Errors_Handler.cpp \
 			src/Utility.cpp \
 			src/ServerManager.cpp \
-			src/Client.cpp \
+			src/Client/Client.cpp \
 			src/CGI/CGI_Configuration.cpp \
 			src/CGI/CGI_Getters.cpp \
 			src/CGI/CGI_Setters.cpp \
 			src/Configuration/ConfigurationFile.cpp \
 			src/Configuration/ConfigurationParser.cpp \
+			src/Location/Getters.cpp \
+			src/Location/Setters.cpp \
+			src/Location/Location.cpp \
 			src/Logger/Logger.cpp \
 			src/ServerConfiguration/Getters.cpp \
 			src/ServerConfiguration/ServerConfiguration.cpp \
 			src/ServerConfiguration/Setters.cpp \
 			src/ServerConfiguration/Validation.cpp \
-			src/RequestCopy.cpp \
-			src/RequestParser.cpp \
+			src/Request/Request.cpp \
+			src/Request/RequestParser.cpp \
 			src/Mime.cpp \
 			# src/Request.cpp \
 		
@@ -24,7 +27,7 @@ HEADER =	include/Utils.hpp \
 			include/Webserv.hpp \
 			include/ServerManager.hpp \
 			include/Client.hpp \
-			include/CGI_Configuration.hpp \
+			include/CgiConfig.hpp \
 			include/ConfigurationFile.hpp \
 			include/ConfigurationParser.hpp \
 			include/Logger.hpp \
@@ -36,7 +39,7 @@ OBJ = $(SRC:.cpp=.o)
 
 CXX = c++
 
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+CXXFLAGS = -Wextra -Wall -Werror -std=c++98 -pedantic
 
 RM = rm -rf
 

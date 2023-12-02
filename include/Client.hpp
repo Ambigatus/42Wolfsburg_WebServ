@@ -32,15 +32,15 @@ class Client
 		 
 	public:
 		Client();
-		Client(ServerConfig &);
+		Client(ServerConfiguration &);
 		Client(const Client &other);
 		Client &operator=(const Client & rhs);
 		~Client();
 
 		/*needed objects*/
 		//Response object
-		Request			request;
-		ServerConfig	server;
+		Request			        request;
+		ServerConfiguration     server;
 
 	//getters
 		/*we need & here for incapsulation*/
@@ -52,14 +52,13 @@ class Client
 	//setter
 		void                setSocket(int &);
         void                setIp(sockaddr_in &);
-        void                setServer(ServerConfig &);
+        void                setServer(ServerConfiguration &);
 		
 	//methods
 		//build Response
 		void	updateTime();//method update for time
 		void	clearClient();//clear Client
 	
-}
-
+};
 
 #endif

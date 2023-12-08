@@ -9,6 +9,12 @@
 //class for init server
 class ServerManager 
 {
+	public:
+		ServerManager();
+		~ServerManager();
+		void	startServers();
+		void	setupServers(std::vector<ServerConfig>);
+
 	private:
 	//variables
 		/*list of configuration of all servers*/
@@ -46,15 +52,8 @@ class ServerManager
 		/*CGI part*/
 		void	sendCgiBody(Client &, CgiHandler &);
 		void	readCgiResponse(Client &, CgiHandler &);
-
 		void	closeConnection(const int);
 
-	public:
-		ServerManager();
-		~ServerManager();
-		void	startServers();
-		void	setupServers(std::vector<ServerConfig>);
-
-}
+};
 
 #endif

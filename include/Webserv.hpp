@@ -49,7 +49,7 @@
 # include "Mime.hpp"
 # include "ServerManager.hpp"
 # include "ServerConfiguration.hpp"
-# include "CgiConfig.hpp"
+# include "CGI_Configuration.hpp"
 
 
 #endif

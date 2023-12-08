@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:45:02 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/18 14:26:14 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/08 18:29:04 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #include "Webserv.hpp"
 #include "Request.hpp"
-//we need Response
+#include "Response.hpp"
 
 /* Stores all information about Client during Request-Response process*/
 class Client 

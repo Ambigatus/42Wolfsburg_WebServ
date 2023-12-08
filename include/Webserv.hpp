@@ -34,4 +34,15 @@
 # include <sys/time.h> //The <sys/time.h> library in C and C++ provides functionality for working with time and timing-related operations.
 # include <signal.h> //The <signal.h> library in C and C++ provides features for working with signals, which are software interrupts delivered to a running process.
 
+/*						HPP Files								*/
+# include "ConfigurationFile.hpp"
+# include "ConfigurationParser.hpp"
+# include "Logger.hpp"
+# include "Request.hpp"
+# include "Response.hpp"
+# include "Location.hpp"
+# include "ServerConfiguration.hpp"
+# include "CGI_Configuration.hpp"
+# include "Utils.hpp"
+
 #endif

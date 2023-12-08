@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ddzuba <ddzuba@student.42wolfsburg.de>     +#+  +:+       +#+        */
+/*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:46:04 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/15 17:58:19 by ddzuba           ###   ########.fr       */
+/*   Updated: 2023/12/08 17:40:21 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

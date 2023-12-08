@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 17:45:13 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/08 18:18:36 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/08 18:41:53 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class CGIConfig
 	CGIConfig &operator=(CGIConfig const &copy);
 
 	void	envInitializatation(HTTPRequest& request, const VECTOR<Location>::iterator iter_loc);
-	void	CGIEnvInitialization(HTTP& request, const VECTOR<Location>::iterator iter_loc);
+	void	CGIEnvInitialization(HTTPRequest& request, const VECTOR<Location>::iterator iter_loc);
 	void	execute(short &error_code);
 	void	sendPage(int &pipe_out, int &fd, STR &);
 	void	fixHeader(STR &header);

@@ -12,7 +12,7 @@
 /* ************************************************************************** */
 
 #ifndef MIME_HPP
-#define	MIME_HPP
+# define	MIME_HPP
 
 #include "Webserv.hpp"
 
@@ -47,3 +47,5 @@ class	Mime
 		std::string	getFileType(std::string extension);
 	
 };
+
+#endif

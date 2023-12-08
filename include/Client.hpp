@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:45:02 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/08 18:29:04 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/08 18:32:51 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class Client
 		~Client();
 
 		/*needed objects*/
-		//Response object
+		Response				response;
 		Request			        request;
 		ServerConfiguration     server;
 

@@ -13,16 +13,16 @@ class ServerManager
 		ServerManager();
 		~ServerManager();
 		void	startServers();
-		void	setupServers(std::vector<ServerConfig>);
+		void	setupServers(std::vector<ServerConfiguration>);
 
 	private:
 	//variables
 		/*list of configuration of all servers*/
-		std::vector<ServerConfig>	_servers_config;
+		std::vector<ServerConfiguration>	_servers_config;
 
 		/*keep track of which server configuration corresponds to which file 
 		descriptor, especially for listening sockets.*/
-		std::map<int, ServerConfig> _servers_map;
+		std::map<int, ServerConfiguration> _servers_map;
 
 		/* max_fd - keep track of the highest file descriptor for select method
 		and efficiently monitoring multiple file descriptors when 
@@ -43,15 +43,15 @@ class ServerManager
 		void	initializeFdsSets();
 		void	addToSet(const int , fd_set &);
 		void	removeFromSet(const int , fd_set &);
-		void	getNewConnection(ServerConfig &);
+		void	getNewConnection(ServerConfiguration &);
 		void	readRequest(const int &, Client &);
 		void    isReqBodyEmpty(Client &);
 		void	assignServer(Client &);
 		void	checkTimeout();
 		void	sendResponse(const int &, Client &);
 		/*CGI part*/
-		void	sendCgiBody(Client &, CgiHandler &);
-		void	readCgiResponse(Client &, CgiHandler &);
+		void	sendCgiBody(Client &, CGIConfig &);
+		void	readCgiResponse(Client &, CGIConfig &);
 		void	closeConnection(const int);
 
 };

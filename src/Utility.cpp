@@ -33,7 +33,7 @@ and directory names, last modification times, and file sizes. The generated HTML
 is stored in the body vector, and its length is provided in length. */
 int createHTMLIndex(STR &dir_name, VECTOR<uint8_t> &body, size_t length)
 {
-	struct dirent	*wholeStruct;
+	struct dirent	*wholeStruct = NULL;
 	DIR				*directory;
 	STR				listPage;
 

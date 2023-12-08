@@ -18,7 +18,6 @@ SRC =		src/main.cpp \
 			src/ServerConfiguration/ServerConfiguration.cpp \
 			src/ServerConfiguration/Setters.cpp \
 			src/ServerConfiguration/Validation.cpp \
-			# src/RequestCopy.cpp \#
 			src/RequestParser.cpp \
 			src/Mime.cpp \
 			src/Request.cpp \

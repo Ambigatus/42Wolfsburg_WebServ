@@ -37,6 +37,7 @@
 # include <sys/time.h> //The <sys/time.h> library in C and C++ provides functionality for working with time and timing-related operations.
 # include <signal.h> //The <signal.h> library in C and C++ provides features for working with signals, which are software interrupts delivered to a running process.
 #include <csignal> //used for working with signals, and the SIGPIPE
+#include <unordered_map> //for Mime
 
 /*						HPP Files								*/
 # include "Utils.hpp"

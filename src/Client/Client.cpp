@@ -6,11 +6,11 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:46:04 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/08 17:40:21 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/08 18:39:15 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/Client.hpp"
+#include "../include/Client.hpp"
 
 Client::Client()
 {
@@ -24,9 +24,9 @@ Client::Client(const Client &other)
         this->_client_fd_socket = other._client_fd_socket;
         this->_client_ip_and_port = other._client_ip_and_port;
         this->_last_msg_time = other._last_msg_time;
-        //response
-        //server config
-        //request
+        this->response = other.response;
+        this->server = other.server;
+        this->request = other.request;
     }
     return ;
 }
@@ -38,16 +38,18 @@ Client::Client &operator=(const Client & rhs)
         this->_client_fd_socket = rhs._client_fd_socket;
         this->_client_ip_and_port = rhs._client_ip_and_port;
         this->_last_msg_time = rhs._last_msg_time;
-        //response
-        //server config
-        //request
+        this->response = rhs.response;
+        this->server = rhs.server;
+        this->request = rhs.request;
     }
     return (*this);
 }
 
 Client::Client(ServerConfig &server)
 {
-    //doesn't finished
+    setServer(server);
+    request.setMaxBodySize(server.getClientMaxBodySize());
+    _last_msg_time = time(NULL);
 }
 
 Client::~Client() {}
@@ -88,7 +90,7 @@ void    Client::setIp(sockaddr_in &ip)
 
 void    Client::setServer(ServerConfig &server)
 {
-    //we need response for that!
+    response.setServer(server);
 }
 
 //other methods
@@ -99,6 +101,6 @@ void    Client::updateTime()
 
 void    Client::clearClient()
 {
-    //clear response
+    response.clear();
     request.clear();
 }

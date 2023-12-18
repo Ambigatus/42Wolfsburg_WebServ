@@ -17,8 +17,12 @@ class ServerManager
 
 	private:
 	//variables
+
+		/*Client obj*/
+		 std::map<int, Client> _clients_map;
+
 		/*list of configuration of all servers*/
-		std::vector<ServerConfiguration>	_servers_config;
+		std::vector<ServerConfiguration>	_servers;
 
 		/*keep track of which server configuration corresponds to which file 
 		descriptor, especially for listening sockets.*/
@@ -29,14 +33,8 @@ class ServerManager
 		waiting for data on different connections*/
 		int	_max_fd;
 
-	/*part for listen_fds - I can replace it with ServerConfig Class if we need it*/
-		std::map<int, int> _listen_fds;      // Map listening sockets to server IDs
-    	std::map<int, Client> _clients_map;
-		int getListenFd(int serverId);
-	/*end of this part*/
-
-		fd_set	_read_fds; // sockets that the server is interested in for reading
-		fd_set	_write_fds; // sockets that the server is interested in for writing
+		fd_set	_read_fds_set; // sockets that the server is interested in for reading
+		fd_set	_write_fds_set; // sockets that the server is interested in for writing
 
 	//methods
 		/* init two sets for listening requests(reading and writing FDs)*/

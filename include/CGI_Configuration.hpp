@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 17:45:13 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/08 18:55:05 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/18 21:10:11 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ class CGIConfig
 	void	cleaning();
 	STR		cookies(const STR &str);
 
-	void	setSGIpid(pid_t cgi_pid);
-	void	setSGIpath(const STR &sgi_path);
+	void	setCGIpid(pid_t cgi_pid);
+	void	setCGIpath(const STR &sgi_path);
 
 	const MAP<STR, STR> &getEnv() const;
 	const pid_t			&getCGIpid() const;

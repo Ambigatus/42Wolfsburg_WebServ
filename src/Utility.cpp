@@ -60,7 +60,7 @@ int createHTMLIndex(STR &dir_name, VECTOR<uint8_t> &body, size_t length)
 	struct stat fileStat; //struct stat that hold information about a file, such as its size, permissions, and timestamps.
 	STR			filePath;
 
-	while ((wholeStruct == readdir(directory)) != NULL) //going into whole directory
+	while (!(wholeStruct == readdir(directory))) //going into whole directory
 	{
 		if (strcmp(wholeStruct->d_name, ".") == 0) //checks entry name
 			continue;

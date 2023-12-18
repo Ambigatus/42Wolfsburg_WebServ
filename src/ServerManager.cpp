@@ -6,48 +6,39 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/18 19:50:38 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/18 21:24:32 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ServerManager.hpp"
 
 ServerManager::ServerManager(){}
-~ServerManager::ServerManager(){}
+ServerManager::~ServerManager(){}
 
 //start all servers on ports, what specified in the config file
-void    ServerManager::setupServers(std::vector<ServerConfig> servers_config){
+void    ServerManager::setupServers(std::vector<ServerConfiguration> servers_config){
 
-
-/*part for listen fd, we can delete if we use var from ServerConfig Class!*/
-	// After creating the listening socket, add it to _listen_fds along with its associated server ID.
-        _listen_fds[serverConfig.getFd()] = serverConfig.getId();
-
-        // Also, add the server configuration to the _servers vector.
-        _servers.push_back(serverConfig);
-/*end of this part*/
-
-	Logger::messageLog(U_YELLOW, CONSOLE_OUTPUT, "Start Webserver...");
+	Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "Start Webserver...");
 	_servers = servers_config;
-	char	buffer[INET_ADDRSTRLEN];
+	
 	/*check if we have server duplicates or not*/
 	bool	flag;
-	std::vector<ServerConfig>::iterator it = _servers.begin();
+	std::vector<ServerConfiguration>::iterator it = _servers.begin();
 	while (it != _servers.end())
 	{
 		flag = false;
-		std::vector<ServerConfig>::iterator it2 = _servers.begin();
+		std::vector<ServerConfiguration>::iterator it2 = _servers.begin();
 		
 		while(it2 != it)
 		{
 			if (it2->getHost() == it->getHost() && it2->getPort() == it->getPort())
 			{
-				it->setFd(it2->getFd());
+				it->setFD(it2->getFd());
 				flag = true;
 			}
 			if (!flag)
 				it->serverSetup();
-			Logger::messageLog(U_YELLOW, CONSOLE_OUTPUT, "Server created...");
+			Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "Server created...");
 			++it2;
 		}
 		++it;
@@ -59,9 +50,8 @@ void    ServerManager::setupServers(std::vector<ServerConfig> servers_config){
 //start of all system
 void	ServerManager::startServers()
 {
-	fd_set _read_fds; // sockets that the server is interested in for reading
-	fd_set _write_fds; // sockets that the server is interested in for writing
-	int num_ready_fds; // the number of file descriptors that are ready for reading or writing
+	fd_set read_fds; // sockets that the server is interested in for reading
+	fd_set write_fds; // sockets that the server is interested in for writing
 	int	select_response;//select() answer
 	int i;//for counting fds
 	int	cgi_state;
@@ -113,11 +103,11 @@ void	ServerManager::initializeFdsSets()
 	/*fd-zero - initializes the file descriptor set to contain no file descriptors*/
 	FD_ZERO(&_read_fds_set);
     FD_ZERO(&_write_fds_set);
-	std::vector<ServerConfig>::iterator it = _servers_config.begin();
+	std::vector<ServerConfiguration>::iterator it = _servers.begin();
 
-	while(it != _servers_config.end())
+	while(it != _servers.end())
 	{
-		if (listen(getListenFd(it->getId()), 512) == -1)
+		if (listen(it->getFd(), 512) == -1)
 		{
     		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Problems with setting up the listening socket - %s", \
 								strerror(errno));
@@ -125,29 +115,19 @@ void	ServerManager::initializeFdsSets()
 		}
 		/*O_NONBLOCK-flag make the file descriptor non-blocking. It means that operations
 		 on this file descriptor (like reading or writing) won't block the calling process.*/
-		if (fcntl(getListenFd(it->getId()), F_SETFL, O_NONBLOCK) < 0)
+		if (fcntl(it->getFd(), F_SETFL, O_NONBLOCK) < 0)
         {
 			Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Can't make current fd %s unblocked", strerror(errno));
             exit(EXIT_FAILURE);
         }
-		addToSet(getListenFd(it->getId()), _read_fds_set);
+		addToSet(it->getFd(), _read_fds_set);
 		/*inserting an entry into the _servers_map with new key-value pair*/
-		_servers_map.insert(std::make_pair(getListenFd(it->getId()), *it));
+		_servers_map.insert(std::make_pair(it->getFd(), *it));
 		++it;
 	}
 	/*max_fd -> last created server*/
-	_max_fd = _servers.back().getListenFd(it->getId());
+	_max_fd = _servers.back().getFd();
 }
-
-/*part for listen fd, we can delete if we use var from ServerConfig Class!*/
-int ServerManager::getListenFd(int serverId) {
-    std::map<int, int>::iterator it = _listen_fds.find(serverId);
-    if (it != _listen_fds.end()) {
-        return it->first;  // This is the listening file descriptor.
-    }
-    return -1;  // Handle the case where the server ID is not found.
-}
-/*end of this part*/
 
 /* utility function used to add file descriptors to a set and maintain information 
 about the largest file descriptor in the set by updating _max_fd. */
@@ -171,32 +151,27 @@ void	ServerManager::removeFromSet(const int i, fd_set &set)
 /*accepts a new client connection, logs the connection information, 
 sets up the socket for non-blocking I/O, 
 and keeps track of the connected clients in _clients_map.*/
-void	ServerManager::getNewConnection(ServerConfig &server)
+void	ServerManager::getNewConnection(ServerConfiguration &server)
 {
 	/* most used address family, gives a socket an IPv4 socket address to
 	allow it to communicate with other hosts over a TCP/IP network*/
 	struct	sockaddr_in _client_ip_and_port;
 	/* socklen_t - for storing sizes related to socket address structures */
-	socklen_t	client_address_size = sizeof(client_address);
+	socklen_t	client_address_size = sizeof(_client_ip_and_port);
 	/*for the newly accepted client connection*/
 	int			client_socket;
 	
 	Client	new_client(server);
 	
-	/*INET_ADDRSTRLEN: constant typically from <netinet/in.h> for 
-	IPv4 address(16 symbols)*/
-	char    readable_ip[INET_ADDRSTRLEN];
 	/*accept(int sockfd, struct sockaddr *_Nullable restrict addr,
     socklen_t *_Nullable restrict addrlen) - accept incoming connections from clients*/
-	client_socket = accept(server.getListenFd(it->getId()), (struct sockaddr *)&_client_ip_and_port,\
+	client_socket = accept(server.getFd(), (struct sockaddr *)&_client_ip_and_port,\
 				 (socklen_t*)&client_address_size);
 	if (client_socket == -1)
 	{
-		std::cerr << "Error: " <<  << std::endl;
 		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Accept error %s", strerror(errno));
 		return ;
 	}
-	std::cout <<  << std::endl;
 	Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "New connection!");
 
 	addToSet(client_socket, _read_fds_set);
@@ -221,7 +196,7 @@ void	ServerManager::getNewConnection(ServerConfig &server)
 When the parser finishes or detects an error in the request,
 the socket is transferred from the _read_fds_set to the _write_fds_set.
 The response will be sent during the next iteration of the select() function.*/
-void	Client::readRequest(const int &i, Client &client)
+void	ServerManager::readRequest(const int &i, Client &client)
 {
 	/*used to temporarily store data read from a client's socket*/
 	char	buffer[40000]; //special define?
@@ -257,14 +232,13 @@ void	Client::readRequest(const int &i, Client &client)
 	if (client.request.parsingDone() || client.request.errorCode())
 	{
 		assignServer(client);
-		std::cerr <<  << std::endl;
 		Logger::messageLog(B_TURQUOISE, CONSOLE_OUTPUT, "Request recived!" );
 		client.buildResponse();
 		if (client.response.getCgiState())
 		{
 			isReqBodyEmpty(client);
-			addToSet(client.response._cgi_obj.pipe_in[1], _write_fds_set);
-			addToSet(client.response._cgi_obj.pipe_out[0], _read_fds_set);
+			addToSet(client.response._cgi_conf.pipe_in[1], _write_fds_set);
+			addToSet(client.response._cgi_conf.pipe_out[0], _read_fds_set);
 		}
 		removeFromSet(i, _read_fds_set);
 		addToSet(i, _write_fds_set);
@@ -286,9 +260,9 @@ void	ServerManager::closeConnection(const int i)
 /*assigning a specific server configuration to a client based on the client's request*/
 void	ServerManager::assignServer(Client &client)
 {
-	std::vector<ServerConfig>::iterator it = _servers_config.begin();
+	std::vector<ServerConfiguration>::iterator it = _servers.begin();
 	
-	while(it != _servers_config.end())
+	while(it != _servers.end())
 	{
 		/*comparing the properties of the client's connection (host and port) 
 		and the requested server name with the properties defined in a server configuration*/
@@ -326,9 +300,9 @@ void	ServerManager::checkTimeout()
 void	ServerManager::sendResponse(const int &i, Client &client)
 {
 	size_t	bytes_num;
-	std::string	response = client.response.getRes();
+	std::string	response = client.response.getResponse();
 	if (response.length() >= 40000)
-		bytes_num = write(i, response.c_str(), 40000)
+		bytes_num = write(i, response.c_str(), 40000);
 	else
 		bytes_num = write(i, response.c_str(), response.length());
 
@@ -356,13 +330,13 @@ void	ServerManager::sendResponse(const int &i, Client &client)
 	else
 	{
 		client.updateTime();
-		client.response.cutRes(bytes_num);
+		client.response.cutResponse(bytes_num);
 	}
 }
 
 /*CGI part*/
 /*sent Request body to CGI script*/
-void	ServerManager::sendCgiBody(Client &client, CgiHandler &cgi)
+void	ServerManager::sendCgiBody(Client &client, CGIConfig &cgi)
 {
 	/*keep track of the number of bytes sent by the write system call*/
 	size_t	bytes_num;
@@ -398,7 +372,7 @@ void	ServerManager::sendCgiBody(Client &client, CgiHandler &cgi)
 }
 
 //check this function for new data!
-void	ServerManager::readCgiResponse(Client &client, CgiHandler &cgi)
+void	ServerManager::readCgiResponse(Client &client, CGIConfig &cgi)
 {
 	char	buffer[80000];
 	size_t	bytes_num;
@@ -410,13 +384,13 @@ void	ServerManager::readCgiResponse(Client &client, CgiHandler &cgi)
 		removeFromSet(cgi.pipe_out[0], _read_fds_set);
 		close(cgi.pipe_in[0]);
 		close(cgi.pipe_out[0]);
-		waitpid(cgi.getCgiPid(), &status, 0);
+		waitpid(cgi.getCGIpid(), &status, 0);
 		/*child termination status*/
 		if(WEXITSTATUS(status) != 0)
 			client.response.setErrorResponse(502);//invalid response
 		client.response.setCgiState(2);
-		if (client.response._response_content.find("HTTP/1.1") == std::string::npos)
-			client.response._response_content.insert(0, "HTTP/1.1 200 OK\r\n");
+		if (client.response._response_ready.find("HTTP/1.1") == std::string::npos)
+			client.response._response_ready.insert(0, "HTTP/1.1 200 OK\r\n");
 		return ;
 	}
 	else if (bytes_num < 0)
@@ -432,23 +406,39 @@ void	ServerManager::readCgiResponse(Client &client, CgiHandler &cgi)
 	else
 	{
 		client.updateTime();
-		client.response._response_content.append(buffer,bytes_num);
+		client.response._response_ready.append(buffer,bytes_num);
 		memset(buffer, 0, sizeof(buffer));
 	}
 }
 
-void    ServerManager::isReqBodyEmpty(Client &client)
-{
-	std::string			tmp;
-	std::fstream		file;
-	std::stringstream	string_stream;
+// void    ServerManager::isReqBodyEmpty(Client &client)
+// {
+// 	std::string			tmp;
+// 	std::fstream		file;
+// 	std::stringstream	string_stream;
 	
-	if (client.request.getBody().length() == 0)
-	{
-		file(client.response._cgi_obj.getCgiPath().c_str());
-		string_stream << file.rdbuf();
-		tmp = string_stream.str();
-		client.request.setBody(tmp);
+// 	if (client.request.getBody().length() == 0)
+// 	{
+// 		file(client.response._cgi_conf.getCGIpath().c_str());
+// 		string_stream << file.rdbuf();
+// 		tmp = string_stream.str();
+// 		client.request.setBody(tmp);
 		
-	}
+// 	}
+// }
+
+void ServerManager::isReqBodyEmpty(Client &client)
+{
+    std::string tmp;
+    std::fstream file;  // Changed from std::ifstream to std::fstream
+    std::stringstream string_stream;
+
+    if (client.request.getBody().empty())
+    {
+        file.open(client.response._cgi_conf.getCGIpath().c_str());  // Use .open() to open the file
+        string_stream << file.rdbuf();
+        tmp = string_stream.str();
+        client.request.setBody(tmp);
+        file.close();  // Close the file after reading
+    }
 }

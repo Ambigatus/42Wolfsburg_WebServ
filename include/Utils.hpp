@@ -17,7 +17,7 @@
 # define B_TURQUOISE "\033[36;1m"
 # define U_RED	"\e[4;31m"
 # define U_BLUE	"\e[4;34m"
-# define U_YELLOW	"\e[4;33m"
+// # define U_YELLOW	"\e[4;33m"
 # define U_GREEN	"\e[4;32m"
 # define U_PINK	"\e[4;35m"
 # define U_TURQUOSIE	" \e[4;36m"

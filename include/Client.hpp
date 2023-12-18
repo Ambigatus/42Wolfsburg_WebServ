@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:45:02 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/08 18:32:51 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/18 19:43:12 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ class Client
         void                setServer(ServerConfiguration &);
 		
 	//methods
-		//build Response
+		void	buildResponse();//build response with a client object
 		void	updateTime();//method update for time
 		void	clearClient();//clear Client
 	

@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:46:04 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/08 18:39:15 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/18 19:41:58 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,4 +103,11 @@ void    Client::clearClient()
 {
     response.clear();
     request.clear();
+}
+
+/*building the response associated with a client object*/
+void        Client::buildResponse()
+{
+    response.setRequest(this->request);
+    response.buildResponse();
 }

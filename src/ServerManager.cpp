@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/11/18 14:07:06 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/18 19:36:20 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,14 +93,13 @@ void	ServerManager::startServers()
 				readRequest(i, _clients_map[i]);
 			else if (FD_ISSET(i, &write_fds) && _clients_map.count(i))
 			{
-				//check this part with new data!
-				// cgi_state = _clients_map[i].response.getCgiState(); // 0->NoCGI 1->CGI 
-				// if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_obj.pipe_in[1],&write_fds))
-				// 	sendCgiBody(_clients_map[i], _clients_map[i].response._cgi_obj);
-				// else if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_obj.pipe_out[0], &read_fds))
-				// 	readCgiResponse(_clients_map[i], _clients_map[i].response._cgi_obj);
-				// else if ((cgi_state == 0 || cgi_state == 2) && FD_ISSET(i, &write_fds))
-				// 	sendResponse(i , _clients_map[i]);
+				cgi_state = _clients_map[i].response.getCgiState(); // 0->NoCGI 1->CGI 
+				if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_conf.pipe_in[1],&write_fds))
+					sendCgiBody(_clients_map[i], _clients_map[i].response._cgi_conf);
+				else if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_conf.pipe_out[0], &read_fds))
+					readCgiResponse(_clients_map[i], _clients_map[i].response._cgi_conf);
+				else if ((cgi_state == 0 || cgi_state == 2) && FD_ISSET(i, &write_fds))
+					sendResponse(i , _clients_map[i]);
 			}
 			i++;
 		}
@@ -261,7 +260,7 @@ void	Client::readRequest(const int &i, Client &client)
 		std::cerr <<  << std::endl;
 		Logger::messageLog(B_TURQUOISE, CONSOLE_OUTPUT, "Request recived!" );
 		//discomment this part!
-		// client.buildResponse();
+		client.buildResponse();
 		// if (client.response.getCgiState())
 		// {
 		// 	isReqBodyEmpty(client);

@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:43:35 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/18 19:36:20 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/18 19:50:38 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,14 +259,13 @@ void	Client::readRequest(const int &i, Client &client)
 		assignServer(client);
 		std::cerr <<  << std::endl;
 		Logger::messageLog(B_TURQUOISE, CONSOLE_OUTPUT, "Request recived!" );
-		//discomment this part!
 		client.buildResponse();
-		// if (client.response.getCgiState())
-		// {
-		// 	isReqBodyEmpty(client);
-		// 	addToSet(client.response._cgi_obj.pipe_in[1], _write_fds_set);
-		// 	addToSet(client.response._cgi_obj.pipe_out[0], _read_fds_set);
-		// }
+		if (client.response.getCgiState())
+		{
+			isReqBodyEmpty(client);
+			addToSet(client.response._cgi_obj.pipe_in[1], _write_fds_set);
+			addToSet(client.response._cgi_obj.pipe_out[0], _read_fds_set);
+		}
 		removeFromSet(i, _read_fds_set);
 		addToSet(i, _write_fds_set);
 	}

@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:46:04 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/20 17:25:59 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/20 19:48:25 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ Client::Client &operator=(const Client & rhs)
     return (*this);
 }
 
-Client::Client(ServerConfig &server)
+Client::Client(ServerConfiguration &server)
 {
     setServer(server);
     request.setMaxBodySize(server.getClientMaxBodySize());
@@ -88,7 +88,7 @@ void    Client::setIp(sockaddr_in &ip)
     _client_ip_and_port = ip;
 }
 
-void    Client::setServer(ServerConfig &server)
+void    Client::setServer(ServerConfiguration &server)
 {
     response.setServer(server);
 }

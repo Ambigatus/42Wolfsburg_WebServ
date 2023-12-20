@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 18:46:04 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/20 19:48:25 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/20 19:55:25 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ Client::Client(const Client &other)
     return ;
 }
 
-Client::Client &operator=(const Client & rhs)
+Client &operator=(const Client & rhs)
 {
     if (this != &rhs)
     {

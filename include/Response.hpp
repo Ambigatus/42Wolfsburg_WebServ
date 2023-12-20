@@ -6,7 +6,7 @@
 /*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 18:14:49 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/18 19:30:12 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/20 19:30:24 by hboichuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "CGI_Configuration.hpp"
 # include "ConfigurationFile.hpp"
 # include "ConfigurationParser.hpp"
+# include <unordered_map>
 
 class Response
 {

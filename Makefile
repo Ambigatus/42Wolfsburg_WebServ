@@ -1,44 +1,35 @@
 NAME = webserv
 
 SRC =		src/main.cpp \
-			src/Errors_Handler.cpp \
 			src/Utility.cpp \
 			src/ServerManager.cpp \
-			src/Client/Client.cpp \
-			src/CGI/CGI_Configuration.cpp \
-			src/CGI/CGI_Getters.cpp \
-			src/CGI/CGI_Setters.cpp \
+			src/Response.cpp \
+			src/Client.cpp \
+			src/RequestParser.cpp \
+			src/Request.cpp \
 			src/Configuration/ConfigurationFile.cpp \
 			src/Configuration/ConfigurationParser.cpp \
+			src/ServerConfiguration/Getters.cpp \
+			src/ServerConfiguration/Setters.cpp \
+			src/ServerConfiguration/Validation.cpp \
+			src/ServerConfiguration/ServerConfiguration.cpp \
 			src/Location/Getters.cpp \
 			src/Location/Setters.cpp \
 			src/Location/Location.cpp \
+			src/CGI/CGI_Getters.cpp \
+			src/CGI/CGI_Setters.cpp \
+			src/CGI/CGI_Configuration.cpp \
+			src/Errors_Handler.cpp \
 			src/Logger/Logger.cpp \
-			src/ServerConfiguration/Getters.cpp \
-			src/ServerConfiguration/ServerConfiguration.cpp \
-			src/ServerConfiguration/Setters.cpp \
-			src/ServerConfiguration/Validation.cpp \
-			src/RequestParser.cpp \
-			src/Mime.cpp \
-			src/Request.cpp \
+			# src/Mime.cpp \ 
 		
-HEADER =	include/Utils.hpp \
-			include/Webserv.hpp \
-			include/ServerManager.hpp \
-			include/Client.hpp \
-			include/CgiConfig.hpp \
-			include/ConfigurationFile.hpp \
-			include/ConfigurationParser.hpp \
-			include/Logger.hpp \
-			include/ServerConfiguration.hpp \
-			include/Request.hpp \
-			src/Mime.hpp \
-
+HEADER =	include/Webserv.hpp \
+		
 OBJ = $(SRC:.cpp=.o)
 
 CXX = c++
 
-CXXFLAGS = -Wextra -Wall -Werror -std=c++98 -pedantic
+CXXFLAGS = -Wextra -Wall -Werror -std=c++98 -pedantic #-std=c++11 
 
 RM = rm -rf
 

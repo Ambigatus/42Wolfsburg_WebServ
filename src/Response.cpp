@@ -1,5 +1,5 @@
 #include "../include/Response.hpp"
-#include <unordered_map>
+
 
 Response::Response()
 {
@@ -79,7 +79,7 @@ const std::unordered_map<STR, STR>	Response::mimeTypes = {
 	{".txt", "text/plain"},
 	{".mp3", "audio/mp3"},
 	{".pdf", "application/pdf"},
-	{".default", "text/html"}
+	{"default", "text/html"}
 };
 
 

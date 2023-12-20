@@ -41,16 +41,21 @@
 
 /*						HPP Files								*/
 # include "Utils.hpp"
-# include "ConfigurationFile.hpp"
 # include "ConfigurationParser.hpp"
-# include "Logger.hpp"
-# include "Request.hpp"
-# include "Location.hpp"
-# include "Client.hpp"
-# include "Mime.hpp"
-# include "ServerManager.hpp"
+# include "ConfigurationFile.hpp"
 # include "ServerConfiguration.hpp"
+# include "Location.hpp"
+# include "Request.hpp"
+# include "Response.hpp"
 # include "CGI_Configuration.hpp"
+# include "Logger.hpp"
+
+
+// # include "Client.hpp"
+// # include "Mime.hpp"
+// # include "ServerManager.hpp"
+
+
 
 
 #endif

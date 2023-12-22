@@ -16,7 +16,7 @@ void Request::parseRequestLine(u_int8_t character)
 	else
 	{
 		_err_code = 501;
-		COUT << "Method Error Reques_Line and Character is = " << character << ENDL;
+		COUT << "Method Error Request_Line and Character is = " << character << ENDL;
 		_state = Parsing_Done;
 		return;
 	}
@@ -46,7 +46,7 @@ void Request::parseRequestLineMethod(u_int8_t character)
 	else
 	{
 		_err_code = 501;
-		COUT << "Method Error Reques_Line and Character is = " << character << ENDL;
+		COUT << "Method Error Request_Line and Character is = " << character << ENDL;
 		_state = Parsing_Done;
 	}
 

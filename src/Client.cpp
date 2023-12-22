@@ -88,9 +88,9 @@ void    Client::setIp(sockaddr_in &ip)
     _client_ip_and_port = ip;
 }
 
-void    Client::setServer(ServerConfiguration &server)
+void    Client::setServer(ServerConfiguration &serv)
 {
-    response.setServer(server);
+    response.setServer(serv);
 }
 
 //other methods

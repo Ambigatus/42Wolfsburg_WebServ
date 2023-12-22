@@ -71,7 +71,7 @@ class ServerConfiguration
 					STR		_error_message;
 
 				public:
-					ErrorExeption(STR error_message) throw()
+					explicit ErrorExeption(STR error_message) throw()
 					{
 						_error_message = "Server configuration error: " + error_message;
 					}

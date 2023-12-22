@@ -56,7 +56,6 @@ STR toString(const T val)
 
 STR statusCodeList(short);
 STR showErrorPage(short);
-int createHTMLIndex(STR &, VECTOR<uint8_t> &, size_t &);
 int strToInt(STR str);
 unsigned int hexToDec(const STR& num);
 

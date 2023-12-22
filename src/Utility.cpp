@@ -33,7 +33,7 @@ and directory names, last modification times, and file sizes. The generated HTML
 is stored in the body vector, and its length is provided in length. */
 int createHTMLIndex(STR &dir_name, VECTOR<uint8_t> &body, size_t length)
 {
-	struct dirent	*wholeStruct = NULL;
+	struct dirent	*wholeStruct;
 	DIR				*directory;
 	STR				listPage;
 
@@ -60,7 +60,7 @@ int createHTMLIndex(STR &dir_name, VECTOR<uint8_t> &body, size_t length)
 	struct stat fileStat; //struct stat that hold information about a file, such as its size, permissions, and timestamps.
 	STR			filePath;
 
-	while (!(wholeStruct == readdir(directory))) //going into whole directory
+	while ((wholeStruct = readdir(directory)) != NULL) //going into whole directory
 	{
 		if (strcmp(wholeStruct->d_name, ".") == 0) //checks entry name
 			continue;
@@ -97,5 +97,3 @@ int createHTMLIndex(STR &dir_name, VECTOR<uint8_t> &body, size_t length)
     length = body.size(); // calculates lenght of the HTML content
     return (0);
 }
-
-

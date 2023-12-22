@@ -60,6 +60,7 @@ ServerConfiguration &ServerConfiguration::operator=(const ServerConfiguration &c
 		this->_autoindex = copy._autoindex;
 		this->_server_address = copy._server_address;
 	}
+    return *this;
 }
 
 /*Creating a blank for error pages */

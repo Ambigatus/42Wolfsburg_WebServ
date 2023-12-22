@@ -46,16 +46,18 @@
 # include "ServerConfiguration.hpp"
 # include "Location.hpp"
 # include "Request.hpp"
-# include "Response.hpp"
+//# include "Response.hpp"
 # include "CGI_Configuration.hpp"
-# include "Logger.hpp"
 # include "Mime.hpp"
+# include "Logger.hpp"
+
+
 
 // # include "Client.hpp"
 
 // # include "ServerManager.hpp"
 
-
+int createHTMLIndex(STR &, VECTOR<uint8_t> &, size_t &);
 
 
 #endif

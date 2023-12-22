@@ -14,7 +14,7 @@ Response::Response()
 	_auto_index = 0;
 }
 
-Response::Response(Request &req) : _request(req) 
+Response::Response(Request &req) : _request(req)
 {
 	_target_file = "";
 	_body.clear();
@@ -456,7 +456,7 @@ void Response::setServerErrorPages()
 
 void Response::buildErrorBody()
 {
-	if (!_server.getErrorPages().count(_code) || _server.getErrorPages().at(_code).empty() || 
+	if (!_server.getErrorPages().count(_code) || _server.getErrorPages().at(_code).empty() ||
 	_request.getMethod() == DELETE || _request.getMethod() == POST)
 	{
 		setServerErrorPages();

@@ -10,12 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CGICONFIG_HPP
-# define CGICONFIG_HPP
+#ifndef CGI_CONFIGURATION_HPP
+# define CGI_CONFIGURATION_HPP
 
 # include "Webserv.hpp"
 
-class HTTPRequest;
+class Request;
 class CGIConfig
 {
 	private:

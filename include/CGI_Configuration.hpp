@@ -14,6 +14,7 @@
 # define CGI_CONFIGURATION_HPP
 
 # include "Webserv.hpp"
+# include "Request.hpp"
 
 class Request;
 class CGIConfig

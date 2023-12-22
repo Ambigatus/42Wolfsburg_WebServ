@@ -1,4 +1,4 @@
-#include "Webserv.hpp"
+#include "../../include/ConfigurationFile.hpp"
 
 ConfigurationFile::ConfigurationFile() { }
 ConfigurationFile::ConfigurationFile(STR const path) { this->_path = path;}

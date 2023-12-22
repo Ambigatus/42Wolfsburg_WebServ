@@ -299,7 +299,7 @@ void	ServerManager::checkTimeout()
 //check this func!
 void	ServerManager::sendResponse(const int &i, Client &client)
 {
-	size_t	bytes_num;
+	int	bytes_num;
 	std::string	response = client.response.getResponse();
 	if (response.length() >= 40000)
 		bytes_num = write(i, response.c_str(), 40000);
@@ -311,7 +311,7 @@ void	ServerManager::sendResponse(const int &i, Client &client)
 		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Wrong sendResponse %s", strerror(errno));
 		closeConnection(i);
 	}
-	else if (bytes_num == 0 || bytes_num == response.length())
+	else if (bytes_num == 0 || (size_t) bytes_num == response.length())
 	{
 		Logger::messageLog(B_TURQUOISE, CONSOLE_OUTPUT, "Response sent");
 		if (client.request.keepAlive() == false || client.request.errorCode() || \
@@ -339,7 +339,7 @@ void	ServerManager::sendResponse(const int &i, Client &client)
 void	ServerManager::sendCgiBody(Client &client, CGIConfig &cgi)
 {
 	/*keep track of the number of bytes sent by the write system call*/
-	size_t	bytes_num;
+	int	bytes_num;
 	std::string	&req_body = client.request.getBody();
 
 	if (req_body.length() == 0)
@@ -358,7 +358,7 @@ void	ServerManager::sendCgiBody(Client &client, CGIConfig &cgi)
 		client.response.setErrorResponse(500);//check this line
 		
 	}
-	else if (bytes_num == 0 || bytes_num == req_body.length())
+	else if (bytes_num == 0 || (size_t) bytes_num == req_body.length())
 	{
 		removeFromSet(cgi.pipe_in[1], _write_fds_set);
 		close(cgi.pipe_in[1]);
@@ -375,7 +375,7 @@ void	ServerManager::sendCgiBody(Client &client, CGIConfig &cgi)
 void	ServerManager::readCgiResponse(Client &client, CGIConfig &cgi)
 {
 	char	buffer[80000];
-	size_t	bytes_num;
+	int     bytes_num;
 	int		status;
 	
 	bytes_num = read(cgi.pipe_out[0], buffer, 80000);

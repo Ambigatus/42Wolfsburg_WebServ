@@ -1,4 +1,4 @@
-#include "../../include/CgiConfig.hpp"
+#include "../../include/CGI_Configuration.hpp"
 
 CGIConfig::CGIConfig()
 {
@@ -61,7 +61,7 @@ CGIConfig &CGIConfig::operator=(const CGIConfig &copy)
 
 void	CGIConfig::CGIEnvInitialization(Request &request, const VECTOR<Location>::iterator iter_loc)
 {
-	STR		cgi_exec = ("cgi-bin/" + iter_loc->getCGIpath()[0]).c_str();
+	STR		cgi_exec = ("cgi-bin/" + iter_loc->getCGIPath()[0]).c_str();
 	char	*cwd = getcwd(NULL, 0);
 	if (_cgi_path[0] != '/')
 	{
@@ -96,7 +96,7 @@ void	CGIConfig::CGIEnvInitialization(Request &request, const VECTOR<Location>::i
 		iter != request_headers.end(); ++iter)
 	{
 		STR name = iter->first;
-		std::transform(name.begin(), name.end(), ::toupper);
+		std::transform(name.begin(), name.end(), name.begin(), ::toupper);
 		STR key = "HTTP_" + name;
 		_env[key] = iter->second;
 	}
@@ -226,7 +226,7 @@ STR	CGIConfig::getPathInfo(STR &path, VECTOR<STR> ext)
 	size_t	start;
 	size_t	end;
 
-	for (VECTOR<STR>::iterator iter_ext = ext.begin(); iter_ext != ext.end; iter_ext++)
+	for (VECTOR<STR>::iterator iter_ext = ext.begin(); iter_ext != ext.end(); iter_ext++)
 	{
 		start = path.find(*iter_ext);
 		if (start != STR::npos)
@@ -234,7 +234,7 @@ STR	CGIConfig::getPathInfo(STR &path, VECTOR<STR> ext)
 	}
 	if (start == STR::npos)
 		return "";
-	if (start + 3 >= path.size());
+	if (start + 3 >= path.size())
 		return "";
 	temp = path.substr(start + 3, path.size());
 	if (!temp[0] || temp[0] != '/')

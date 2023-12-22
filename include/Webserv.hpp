@@ -49,10 +49,10 @@
 # include "Response.hpp"
 # include "CGI_Configuration.hpp"
 # include "Logger.hpp"
-
+# include "Mime.hpp"
 
 // # include "Client.hpp"
-// # include "Mime.hpp"
+
 // # include "ServerManager.hpp"
 
 

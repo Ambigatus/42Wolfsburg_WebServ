@@ -33,7 +33,7 @@ Client::Client(const Client &other)
     return ;
 }
 
-Client &operator=(const Client & rhs)
+Client &Client::operator=(const Client &rhs)
 {
     if (this != &rhs)
     {

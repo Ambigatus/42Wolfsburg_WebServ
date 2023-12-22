@@ -21,7 +21,7 @@ SRC =		src/main.cpp \
 			src/CGI/CGI_Configuration.cpp \
 			src/Errors_Handler.cpp \
 			src/Logger/Logger.cpp \
-			# src/Mime.cpp \ 
+			src/Mime.cpp \
 		
 HEADER =	include/Webserv.hpp \
 		

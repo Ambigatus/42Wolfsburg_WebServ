@@ -19,7 +19,8 @@
 # include "CGI_Configuration.hpp"
 # include "ConfigurationFile.hpp"
 # include "ConfigurationParser.hpp"
-# include <unordered_map>
+# include "Mime.hpp"
+//# include <unordered_map>
 
 class Response
 {
@@ -49,7 +50,8 @@ class Response
 		STR			_response_ready;
 		CGIConfig	_cgi_conf;
 		Request		_request;
-		static const std::unordered_map<STR, STR>	mimeTypes;
+        Mime        _mime;
+//		static const std::unordered_map<STR, STR>	mimeTypes;
 
 	private:
 		ServerConfiguration			_server;

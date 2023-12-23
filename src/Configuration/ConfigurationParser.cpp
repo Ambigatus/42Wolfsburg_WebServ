@@ -262,8 +262,8 @@ void ConfigurationParser::createServer(STR &config, ServerConfiguration &server)
 		server.setIndex("index.html;");
 	if (ConfigurationFile::checkIsFileReadable(server.getRoot(), server.getIndex()))
 		throw ErrorException("Index from config file not found or unreadable");
-	if (server.validationLocations())
-		throw ErrorException("Locaition is duplicated");
+	// if (server.checkLocationValid())
+	// 	throw ErrorException("Locaition is duplicated");
 	if (!server.getPort())
 		throw ErrorException("Port not found");
 	server.setErrorPages(err_code);

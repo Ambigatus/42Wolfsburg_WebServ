@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
+/*   By: ddzuba <ddzuba@student.42wolfsburg.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:28:43 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/08 18:25:09 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/23 17:11:47 by ddzuba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	main(int argc, char **argv)
 
 			signal(SIGPIPE, sigpipeHandle);
 			if (argc == 1) 
-    			serv_configuration = "configs/default.conf";
+    			serv_configuration = "conf/default.conf";
  			else 
     			serv_configuration = argv[1];
 			config_parser.parseConfig(serv_configuration);

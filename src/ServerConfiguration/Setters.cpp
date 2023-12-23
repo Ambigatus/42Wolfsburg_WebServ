@@ -273,3 +273,8 @@ void    ServerConfiguration::setLocation(STR path, VECTOR<STR> param)
         throw ErrorExeption("ERROR: Failed alias file in location validation.");
     this->_locations.push_back(new_location);
 }
+
+void    ServerConfiguration::setFD(int fd)
+{
+    this->_listen_fd = fd;
+}

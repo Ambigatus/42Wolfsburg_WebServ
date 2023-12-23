@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hboichuk <hboichuk@student.42wolfsburg.de> +#+  +:+       +#+        */
+/*   By: ddzuba <ddzuba@student.42wolfsburg.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 18:14:49 by hboichuk          #+#    #+#             */
-/*   Updated: 2023/12/20 19:30:24 by hboichuk         ###   ########.fr       */
+/*   Updated: 2023/12/23 15:55:02 by ddzuba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ class Response
 		STR			_response_ready;
 		CGIConfig	_cgi_conf;
 		Request		_request;
-        static Mime        _mime;
+        Mime        _mime;
 //		static const std::unordered_map<STR, STR>	mimeTypes;
 
 	private:

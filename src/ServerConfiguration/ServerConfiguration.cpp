@@ -81,3 +81,23 @@ void	ServerConfiguration::createErrorPages(void)
 	_error_pages[503] = "";
 	_error_pages[505] = "";
 }
+
+void	ServerConfiguration::serverSetup(void)
+{
+	if((_listen_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+	{
+		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "WebServ: ERROR: socket error %s   Closing...", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+	int	option_value = 1;
+	setsockopt(_listen_fd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof(int));
+	memset(&_server_address, 0, sizeof(_server_address));
+	_server_address.sin_family = AF_INET;
+	_server_address.sin_addr.s_addr = _host;
+	_server_address.sin_port = htons(_port);
+	if(bind(_listen_fd, (struct sockaddr *) &_server_address, sizeof(_server_address)) == -1)
+	{
+		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "WebServ: ERROR: bind error %s	Closing...", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+}

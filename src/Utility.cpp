@@ -31,7 +31,7 @@ unsigned int hexToDec(const STR& num)
 /*This function creates an HTML directory listing for a specified directory, including file 
 and directory names, last modification times, and file sizes. The generated HTML content 
 is stored in the body vector, and its length is provided in length. */
-int createHTMLIndex(STR &dir_name, VECTOR<uint8_t> &body, size_t length)
+int createHTMLIndex(STR &dir_name, VECTOR<uint8_t> &body, size_t &length)
 {
 	struct dirent	*wholeStruct;
 	DIR				*directory;

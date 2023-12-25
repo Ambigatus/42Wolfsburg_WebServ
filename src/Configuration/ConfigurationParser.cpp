@@ -195,7 +195,7 @@ void ConfigurationParser::createServer(STR &config, ServerConfiguration &server)
 				throw ErrorException("Creating server error: '{' not found");
 			i++;
 			while(i < params.size() && params[i] != "}")
-				codes.push_back(params[++i]);
+				codes.push_back(params[i++]);
 			server.setLocation(path, codes);
 			if(i < params.size() && params[i] != "}")
 				throw ErrorException("Creating server error: '}' not found");

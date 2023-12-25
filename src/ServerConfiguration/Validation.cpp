@@ -1,4 +1,5 @@
 #include "../../include/ServerConfiguration.hpp"
+#include "../../include/Utils.hpp"
 
 /*The function checks if the token ends with a semicolon (';'). The purpose of this 
 function is to ensure that tokens are correctly formatted and terminate with a semicolon. 
@@ -110,4 +111,25 @@ int	ServerConfiguration::checkLocationValid(Location &location) const
         }
     }
     return 0;
+}
+
+bool    ServerConfiguration::checkLocationDup(void)
+{
+    if (this->_locations.size() < 2)
+        return (false);
+    std::vector<Location>::const_iterator it1;
+    std::vector<Location>::const_iterator it2;
+    it1 = this->_locations.begin();
+    while (it1 != this->_locations.end() - 1)
+    {
+        it2 = it1 + 1;
+        while (it2 != this->_locations.end())
+        {
+            if (it1->getPath() == it2->getPath())
+                return(true);
+            it2++;
+        }
+        it1++;
+    }
+    return (false);
 }

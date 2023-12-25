@@ -48,6 +48,7 @@ class ServerConfiguration
 		bool								checkErrPagesValid();
 		int									checkLocationValid(Location &location) const;
 		void								createErrorPages(void);
+        bool                                checkLocationDup(void);
 
 		const STR							&getServerName();
 		const uint16_t						&getPort();

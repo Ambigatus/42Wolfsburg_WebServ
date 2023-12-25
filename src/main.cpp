@@ -14,9 +14,10 @@
 #include "../include/ServerManager.hpp" //main class for creating server
 
 /*handle the SIGPIPE signal without any specific action*/
-void sigpipeHandle(int /* sig */) {
-     std::cerr << "SIGPIPE received!" << std::endl;
-}
+//void sigpipeHandle(int /* sig */) {
+//     ERROR << "SIGPIPE received!" << std::endl;
+//}
+void sigpipeHandle(int sig) { if(sig) {}}
 
 int	main(int argc, char **argv)
 {
@@ -24,16 +25,15 @@ int	main(int argc, char **argv)
 	{
 		try
 		{
-			std::string			serv_configuration;
+			STR			serv_configuration;
 			ConfigurationParser	config_parser;
 			ServerManager		manager;
-
 			signal(SIGPIPE, sigpipeHandle);
-			if (argc == 1) 
-    			serv_configuration = "conf/default.conf";
- 			else 
-    			serv_configuration = argv[1];
+
+            serv_configuration = (argc == 1 ? "conf/default.conf" : argv[1]);
+
 			config_parser.parseConfig(serv_configuration);
+//            printf("I am here\n");
 			manager.setupServers(config_parser.getServers());
 			manager.startServers();
 

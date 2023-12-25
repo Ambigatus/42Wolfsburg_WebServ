@@ -29,7 +29,7 @@ OBJ = $(SRC:.cpp=.o)
 
 CXX = c++
 
-CXXFLAGS = -Wextra -Wall -std=c++98 -pedantic #-std=c++11 
+CXXFLAGS = -Wextra -Wall -std=c++98 -pedantic #-fsanitize=address  -Werror -std=c++11
 
 RM = rm -rf
 

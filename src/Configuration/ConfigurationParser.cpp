@@ -1,25 +1,28 @@
 #include "../../include/ConfigurationFile.hpp"
 
-ConfigurationParser::ConfigurationParser() { this->_nb_server = 0;}
+ConfigurationParser::ConfigurationParser()
+{
+    this->_nb_server = 0;
+}
 ConfigurationParser::~ConfigurationParser() {}
 
-ConfigurationParser::ConfigurationParser(const ConfigurationParser &copy)
-{
-	if (this != &copy)
-	{
-		this->_nb_server = copy._nb_server;
-	}
-	return ;
-}
+//ConfigurationParser::ConfigurationParser(const ConfigurationParser &copy)
+//{
+//	if (this != &copy)
+//	{
+//		this->_nb_server = copy._nb_server;
+//	}
+//	return ;
+//}
 
-ConfigurationParser &ConfigurationParser::operator=(const ConfigurationParser &copy)
-{
-	if (this != &copy)
-	{
-		this->_nb_server = copy._nb_server;
-	}
-	return *this;
-}
+//ConfigurationParser &ConfigurationParser::operator=(const ConfigurationParser &copy)
+//{
+//	if (this != &copy)
+//	{
+//		this->_nb_server = copy._nb_server;
+//	}
+//	return *this;
+//}
 
 int ConfigurationParser::parseConfig(const STR &config_file)
 {
@@ -30,7 +33,6 @@ int ConfigurationParser::parseConfig(const STR &config_file)
 		throw ErrorException("FIle isn't valid");
 	if (file.checkConfigFile(file.getPath(), 4) == -1)
 		throw ErrorException("File isn't accesible");
-	
 	content = file.readFile(config_file);
 	if (content.empty())
 		throw ErrorException("File is empty");
@@ -44,6 +46,7 @@ int ConfigurationParser::parseConfig(const STR &config_file)
 		ServerConfiguration server;
 		createServer(this->_server_config[i], server);
 		this->_servers.push_back(server);
+//        printf("I am here");
 	}
 	if (this->_nb_server > 1)
 		checkServers();
@@ -148,7 +151,7 @@ VECTOR<STR> splitParams(STR line, STR sep)
 	end = 0;
 	while (1)
 	{
-		end = line.find_last_not_of(sep, start);
+		end = line.find_first_of(sep, start);
 		if(end == STR::npos)
 			break;
 		STR tmp = line.substr(start, end - start);
@@ -167,10 +170,11 @@ void ConfigurationParser::createServer(STR &config, ServerConfiguration &server)
 	int			loc = 1;
 	bool		autoindex = false;
 	bool		max_size = false;
-
+//
 	params = splitParams(config += ' ', STR(" \n\t"));
 	if (params.size() < 3)
 		throw ErrorException("Failed server validation");
+//    printf("I am here");
 	for (size_t i = 0; i < params.size(); i++)
 	{
 		if (params[i] == "listen" && (i + 1) < params.size() && loc)
@@ -262,8 +266,8 @@ void ConfigurationParser::createServer(STR &config, ServerConfiguration &server)
 		server.setIndex("index.html;");
 	if (ConfigurationFile::checkIsFileReadable(server.getRoot(), server.getIndex()))
 		throw ErrorException("Index from config file not found or unreadable");
-	// if (server.checkLocationValid())
-	// 	throw ErrorException("Locaition is duplicated");
+	 if (server.checkLocationDup())
+	 	throw ErrorException("Location is duplicated");
 	if (!server.getPort())
 		throw ErrorException("Port not found");
 	server.setErrorPages(err_code);
@@ -287,7 +291,7 @@ void ConfigurationParser::checkServers()
 	}
 }
 
-VECTOR<ServerConfiguration>	ConfigurationParser::getServers(){ return (this->_servers);}
+VECTOR<ServerConfiguration>	ConfigurationParser::getServers(){return (this->_servers);}
 
 int ConfigurationParser::strCompare(STR str1, STR str2, size_t pos)
 {

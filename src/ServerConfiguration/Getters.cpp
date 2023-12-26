@@ -10,7 +10,7 @@ const STR &ServerConfiguration::getRoot()
 	return (this->_root);
 }
 
-const bool &ServerConfiguration::getAotoIndex()
+const bool &ServerConfiguration::getAutoIndex()
 {
 	return (this->_autoindex);
 }

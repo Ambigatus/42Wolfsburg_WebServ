@@ -8,7 +8,8 @@ void	Location::setPath(STR param)
 void	Location::setRootLocation(STR param)
 {
 	if (ConfigurationFile::getTypePath(param) != 2)
-		throw ServerConfiguration::ErrorExeption("root of location.");
+		throw ServerConfiguration::ErrorExeption("root of location. error here?");
+    COUT << param << ENDL;
 	this->_root = param;
 }
 
@@ -26,7 +27,7 @@ void	Location::setMethods(VECTOR<STR> methods)
 			this->_methods[0] = 1;
 		else if (methods[i] == "POST")
 			this->_methods[1] = 1;
-		else if (methods[2] == "DELETE")
+		else if (methods[i] == "DELETE")
 			this->_methods[2] = 1;
 		else if (methods[i] == "PUT")
 			this->_methods[3] = 1;

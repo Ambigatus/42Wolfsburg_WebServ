@@ -58,7 +58,7 @@ class ServerConfiguration
 		const STR							&getRoot();
 		const MAP<short, STR>				&getErrorPages();
 		const STR							&getIndex();
-		const bool							&getAotoIndex();
+		const bool							&getAutoIndex();
 		const STR							&getPathErrorPage(short key);
 		const VECTOR<Location>::iterator	getLocationKey(STR key);
 

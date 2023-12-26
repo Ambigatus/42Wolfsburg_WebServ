@@ -199,7 +199,7 @@ int	CGIConfig::startFinder(const STR path, const STR delim)
 {
 	if (path.empty())
 		return -1;
-	size_t	temp = path.find(delim);
+	size_t  temp = path.find(delim);
 	if (temp != STR::npos)
 		return temp;
 	else

@@ -24,8 +24,10 @@ ConfigurationFile &ConfigurationFile::operator=(const ConfigurationFile &copy)
 
 int ConfigurationFile::getTypePath(STR const path)
 {
-	struct stat buffer;
-	int		 result = stat(path.c_str(), &buffer);
+	struct stat     buffer;
+	int result;
+    result = stat(path.c_str(), &buffer);
+    COUT << result << "  RESULT" << ENDL;
 
 	if (result == 0)
 	{

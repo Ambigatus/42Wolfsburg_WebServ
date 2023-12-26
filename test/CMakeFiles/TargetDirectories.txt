@@ -1,0 +1,3 @@
+/home/ambigatus/Documents/42_Projects/42Wolfsburg_WebServ/test/CMakeFiles/webserver.dir
+/home/ambigatus/Documents/42_Projects/42Wolfsburg_WebServ/test/CMakeFiles/edit_cache.dir
+/home/ambigatus/Documents/42_Projects/42Wolfsburg_WebServ/test/CMakeFiles/rebuild_cache.dir

@@ -16,86 +16,153 @@ ServerManager::ServerManager(){}
 ServerManager::~ServerManager(){}
 
 //start all servers on ports, what specified in the config file
-void    ServerManager::setupServers(std::vector<ServerConfiguration> servers_config){
-
-	Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "Start Webserver...");
-	_servers = servers_config;
-	
-	/*check if we have server duplicates or not*/
-	bool	flag;
-	std::vector<ServerConfiguration>::iterator it = _servers.begin();
-	while (it != _servers.end())
-	{
-		flag = false;
-		std::vector<ServerConfiguration>::iterator it2 = _servers.begin();
-		
-		while(it2 != it)
-		{
-			if (it2->getHost() == it->getHost() && it2->getPort() == it->getPort())
-			{
-				it->setFD(it2->getFd());
-				flag = true;
-			}
-			if (!flag)
-				it->serverSetup();
-			Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "Server created...");
-			++it2;
-		}
-		++it;
-	}
+//void    ServerManager::setupServers(std::vector<ServerConfiguration> servers_config){
+//
+//	Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "Start Webserver...");
+//	_servers = servers_config;
+//
+//	/*check if we have server duplicates or not*/
+//	bool	flag;
+//	std::vector<ServerConfiguration>::iterator it = _servers.begin();
+//	while (it != _servers.end())
+//	{
+//		flag = false;
+//		std::vector<ServerConfiguration>::iterator it2 = _servers.begin();
+//
+//		while(it2 != it)
+//		{
+//			if (it2->getHost() == it->getHost() && it2->getPort() == it->getPort())
+//			{
+//				it->setFD(it2->getFd());
+//				flag = true;
+//			}
+//			if (!flag)
+//				it->serverSetup();
+//			Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "Server created...");
+//			++it2;
+//		}
+//		++it;
+//	}
+//}
+void    ServerManager::setupServers(std::vector<ServerConfiguration> servers)
+{
+    std::cout << std::endl;
+    Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "Initializing  Servers...");
+    _servers = servers;
+    char buf[INET_ADDRSTRLEN];
+    bool    serverDub;
+    for (std::vector<ServerConfiguration>::iterator it = _servers.begin(); it != _servers.end(); ++it)
+    {
+        serverDub = false;
+        for (std::vector<ServerConfiguration>::iterator it2 = _servers.begin(); it2 != it; ++it2)
+        {
+            if (it2->getHost() == it->getHost() && it2->getPort() == it->getPort())
+            {
+                it->setFD(it2->getFd());
+                serverDub = true;
+            }
+        }
+        if (!serverDub)
+            it->serverSetup();
+        Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Server Created: ServerName[%s] Host[%s] Port[%d]",it->getServerName().c_str(),
+                       inet_ntop(AF_INET, &it->getHost(), buf, INET_ADDRSTRLEN), it->getPort());
+    }
 }
-
 
 
 //start of all system
-void	ServerManager::startServers()
+//void	ServerManager::startServers()
+//{
+//	fd_set read_fds; // sockets that the server is interested in for reading
+//	fd_set write_fds; // sockets that the server is interested in for writing
+//	int	select_response;//select() answer
+//	int i;//for counting fds
+//	int	cgi_state;
+//	_max_fd = 0;
+//
+//	initializeFdsSets();
+//	struct timeval timer;//how long select() will wait for ready fd
+//	while (true)
+//	{
+//		timer.tv_sec = 1;//select() will wait 1 second for any activity on fd
+//        timer.tv_usec = 0;
+//        read_fds = _read_fds_set;
+//        write_fds = _write_fds_set;
+//		/*select() is used for monitoring file descriptors (e.g., sockets) to
+//		 see if they are ready for reading, writing, or have encountered exceptions*/
+//		if ( (select_response = select(_max_fd + 1, &read_fds, &write_fds, NULL, &timer)) < 0 )
+//		{
+//			Logger::messageLog(B_RED, CONSOLE_OUTPUT,  "Select() error!", strerror(errno));
+//            exit(1);
+//			continue ;
+//		}
+//		i = 0;
+//		while (i <= _max_fd)
+//		{
+//			/* If this file descriptor corresponds to a server - we get new connection */
+//			if (FD_ISSET(i, &read_fds) && _servers_map.count(i))
+//                getNewConnection(_servers_map.find(i)->second);
+//			else if (FD_ISSET(i, &read_fds) && _clients_map.count(i))
+//				readRequest(i, _clients_map[i]);
+//			else if (FD_ISSET(i, &write_fds) && _clients_map.count(i))
+//			{
+//				cgi_state = _clients_map[i].response.getCgiState(); // 0->NoCGI 1->CGI
+//				if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_conf.pipe_in[1],&write_fds))
+//					sendCgiBody(_clients_map[i], _clients_map[i].response._cgi_conf);
+//				else if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_conf.pipe_out[0], &read_fds))
+//					readCgiResponse(_clients_map[i], _clients_map[i].response._cgi_conf);
+//				else if ((cgi_state == 0 || cgi_state == 2) && FD_ISSET(i, &write_fds))
+//					sendResponse(i , _clients_map[i]);
+//			}
+//			i++;
+//		}
+//        checkTimeout();
+//	}
+//}
+
+void    ServerManager::startServers()
 {
-	fd_set read_fds; // sockets that the server is interested in for reading
-	fd_set write_fds; // sockets that the server is interested in for writing
-	int	select_response;//select() answer
-	int i;//for counting fds
-	int	cgi_state;
-	_max_fd = 0;
-	
-	initializeFdsSets();
-	struct timeval timer;//how long select() will wait for ready fd
-	while (true)
-	{
-		timer.tv_sec = 1;//select() will wait 1 second for any activity on fd
+    fd_set  recv_set_cpy;
+    fd_set  write_set_cpy;
+    int     select_ret;
+
+    _max_fd = 0;
+    initializeFdsSets();
+    struct timeval timer;
+    while (true)
+    {
+        timer.tv_sec = 1;
         timer.tv_usec = 0;
-        read_fds = _read_fds_set;
-        write_fds = _write_fds_set;
-		/*select() is used for monitoring file descriptors (e.g., sockets) to
-		 see if they are ready for reading, writing, or have encountered exceptions*/
-		if ( (select_response = select(_max_fd + 1, &read_fds, &write_fds, NULL, &timer)) < 0 )
-		{
-			Logger::messageLog(B_RED, CONSOLE_OUTPUT,  "Select() error!", strerror(errno));
+        recv_set_cpy = _read_fds_set;
+        write_set_cpy = _write_fds_set;
+
+        if ( (select_ret = select(_max_fd + 1, &recv_set_cpy, &write_set_cpy, NULL, &timer)) < 0 )
+        {
+            Logger::messageLog(B_YELLOW, CONSOLE_OUTPUT, "webserv: select error %s   Closing ....", strerror(errno));
             exit(1);
-			continue ;
-		}
-		i = 0;
-		while (i <= _max_fd)
-		{
-			/* If this file descriptor corresponds to a server - we get new connection */
-			if (FD_ISSET(i, &read_fds) && _servers_map.count(i))
+            continue ;
+        }
+        for (int i = 0; i <= _max_fd; ++i)
+        {
+            if (FD_ISSET(i, &recv_set_cpy) && _servers_map.count(i))
                 getNewConnection(_servers_map.find(i)->second);
-			else if (FD_ISSET(i, &read_fds) && _clients_map.count(i))
-				readRequest(i, _clients_map[i]);
-			else if (FD_ISSET(i, &write_fds) && _clients_map.count(i))
-			{
-				cgi_state = _clients_map[i].response.getCgiState(); // 0->NoCGI 1->CGI 
-				if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_conf.pipe_in[1],&write_fds))
-					sendCgiBody(_clients_map[i], _clients_map[i].response._cgi_conf);
-				else if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_conf.pipe_out[0], &read_fds))
-					readCgiResponse(_clients_map[i], _clients_map[i].response._cgi_conf);
-				else if ((cgi_state == 0 || cgi_state == 2) && FD_ISSET(i, &write_fds))
-					sendResponse(i , _clients_map[i]);
-			}
-			i++;
-		}
-	}
-	checkTimeout();
+            else if (FD_ISSET(i, &recv_set_cpy) && _clients_map.count(i))
+                readRequest(i, _clients_map[i]);
+            else if (FD_ISSET(i, &write_set_cpy) && _clients_map.count(i))
+            {
+                int cgi_state = _clients_map[i].response.getCgiState(); // 0->NoCGI 1->CGI write/read to/from script 2-CGI read/write done
+                if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_conf.pipe_in[1], &write_set_cpy))
+                    sendCgiBody(_clients_map[i], _clients_map[i].response._cgi_conf);
+                else if (cgi_state == 1 && FD_ISSET(_clients_map[i].response._cgi_conf.pipe_out[0], &recv_set_cpy))
+                    readCgiResponse(_clients_map[i], _clients_map[i].response._cgi_conf);
+                else if ((cgi_state == 0 || cgi_state == 2)  && FD_ISSET(i, &write_set_cpy))
+                    sendResponse(i, _clients_map[i]);
+            }
+        }
+        checkTimeout();
+    }
 }
+
 
 /*init for all sets of fds for listening requests*/
 void	ServerManager::initializeFdsSets()
@@ -105,6 +172,7 @@ void	ServerManager::initializeFdsSets()
     FD_ZERO(&_write_fds_set);
 	std::vector<ServerConfiguration>::iterator it = _servers.begin();
 
+    COUT << it->getFd() << ENDL;
 	while(it != _servers.end())
 	{
 		if (listen(it->getFd(), 512) == -1)

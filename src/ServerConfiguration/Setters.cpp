@@ -24,8 +24,19 @@ void	ServerConfiguration::setHost(STR param)
 void	ServerConfiguration::setRoot(STR root)
 {
 	validationToken(root);
-	//this part can be done only after finishing ConfigFile
+    if (ConfigurationFile::getTypePath(root) == 2)
+    {
+        this->_root = root;
+        return ;
+    }
+    char dir[1024];
+    getcwd(dir, 1024);
+    STR full_root = dir + root;
+    if (ConfigurationFile::getTypePath(full_root) != 2)
+        throw ErrorExeption("Wrong syntax: root");
+    this->_root = full_root;
 }
+
 
 /*This function is responsible for setting the port number for a server configuration.
 Function validates and sets the port number for a server configuration, ensuring 
@@ -151,7 +162,7 @@ void    ServerConfiguration::setLocation(STR path, VECTOR<STR> param)
         {
             if (flag_methods)
                 throw ErrorExeption("ERROR: Allow methods of location is duplicated.");
-            VECTOR<STR> methods;
+//            VECTOR<STR> methods;
             while (++i < param.size())
             {
                 if (param[i].find(";") != STR::npos)

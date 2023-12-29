@@ -33,6 +33,7 @@ int	main(int argc, char **argv)
             serv_configuration = (argc == 1 ? "conf/default.conf" : argv[1]);
 
 			config_parser.parseConfig(serv_configuration);
+//            config_parser.printConfig();
 //            printf("I am here\n");
 			manager.setupServers(config_parser.getServers());
 			manager.startServers();
@@ -46,7 +47,7 @@ int	main(int argc, char **argv)
 	}
 	else
 	{
-		std::cerr << "Wrong arguments" << std::endl; //better error need
+		Logger::messageLog(B_RED, CONSOLE_OUTPUT, "Error: wrong arguments.");
 		return (1);
 	}
 	return (0);

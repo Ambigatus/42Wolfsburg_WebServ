@@ -86,7 +86,7 @@ void ConfigurationParser::splitServers(STR &content)
 	size_t end = 1;
 
 	if (content.find("server", 0) == std::string::npos)
-		throw ErrorException("Server not fount");
+		throw ErrorException("Server not found");
 	while (start != end && start < content.length())
 	{
 		start = findServerBegin(start, content);
@@ -282,7 +282,8 @@ void ConfigurationParser::checkServers()
 
 	for (it1 = this->_servers.begin(); it1 != this->_servers.end() - 1; it1++)
 	{
-		for (it2 = it1 + 1; it2 != this->_servers.end() - 1; it1++)
+//		for (it2 = it1 + 1; it2 != this->_servers.end() - 1; it1++)
+        for (it2 = it1 + 1; it2 != this->_servers.end(); it2++)
 		{
 			if (it1->getPort() == it2->getPort() && it1->getHost() == it2->getHost() && \
 				 it1->getServerName() == it2->getServerName())

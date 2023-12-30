@@ -44,7 +44,7 @@ STR statusCodeList(short pageCode)
         case 403:
             return "Forbidden";
         case 404:
-            return "Not Found";
+            return "Not Found, and we need to figure out what the heck";
         case 405:
             return "Method Not Allowed";
         case 406:

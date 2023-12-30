@@ -2,57 +2,57 @@
 
 const STR	&Location::getPath() const
 {
-	return this->_path;
+	return (this->_path);
 }
 
 const STR	&Location::getRootLocation() const
 {
-	return this->_root;
+	return (this->_root);
 }
 
 const STR	&Location::getIndexLocation() const
 {
-	return this->_index;
+	return (this->_index);
 }
 
 const VECTOR<short>	&Location::getMethods() const
 {
-	return this->_methods;
+	return (this->_methods);
 }
 
 const VECTOR<STR>	&Location::getCGIPath() const
 {
-	return this->_cgi_path;
+	return (this->_cgi_path);
 }
 
 const VECTOR<STR>	&Location::getCGIExtension() const
 {
-	return this->_cgi_exten;
+	return (this->_cgi_exten);
 }
 
 const bool	&Location::getAutoIndex() const
 {
-	return this->_autoindex;
+	return (this->_autoindex);
 }
 
 const STR	&Location::getReturn() const
 {
-	return this->_return;
+	return (this->_return);
 }
 
 const STR	&Location::getAlias() const
 {
-	return this->_alias;
+	return (this->_alias);
 }
 
 const MAP<STR, STR>	&Location::getExtensionPath() const
 {
-	return this->_exten_path;
+	return (this->_exten_path);
 }
 
 const size_t	&Location::getMaxBodySize() const
 {
-	return this->_client_max_body_size;
+	return (this->_client_max_body_size);
 }
 
 STR	Location::methodsOutput() const

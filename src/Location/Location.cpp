@@ -48,7 +48,7 @@ Location &Location::operator=(const Location &copy)
 		this->_exten_path = copy._exten_path;
 		this->_client_max_body_size = copy._client_max_body_size;
 	}
-	return *this;
+	return (*this);
 }
 
 Location::~Location() {}

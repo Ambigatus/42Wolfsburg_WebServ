@@ -8,8 +8,7 @@ void	Location::setPath(STR param)
 void	Location::setRootLocation(STR param)
 {
 	if (ConfigurationFile::getTypePath(param) != 2)
-		throw ServerConfiguration::ErrorExeption("root of location. error here?");
-    COUT << param << ENDL;
+		throw ServerConfiguration::ErrorExeption("ERROR: wrong root of location!");
 	this->_root = param;
 }
 

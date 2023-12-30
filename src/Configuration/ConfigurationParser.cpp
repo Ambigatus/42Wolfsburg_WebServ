@@ -39,7 +39,7 @@ int ConfigurationParser::parseConfig(const STR &config_file)
 	removeComments(content);
 	removeWhiteSpace(content);
 	splitServers(content);
-	if(this->_server_config.size() != this->_nb_server)
+	if (this->_server_config.size() != this->_nb_server)
 		throw ErrorException("Config Size Error");
 	for (size_t i = 0; i < this->_nb_server; i++)
 	{
@@ -187,7 +187,7 @@ void ConfigurationParser::createServer(STR &config, ServerConfiguration &server)
 		{
 			STR	path;
 			i++;
-			if(params[i] == "{" || params[i] == "}")
+			if (params[i] == "{" || params[i] == "}")
 				throw ErrorException("Creating server error: '{}' found");
 			path = params[i];
 			VECTOR<STR> codes;
@@ -218,9 +218,9 @@ void ConfigurationParser::createServer(STR &config, ServerConfiguration &server)
 			while (++i < params.size())
 			{
 				err_code.push_back(params[i]);
-				if(params[i].find(';') != STR::npos)
+				if (params[i].find(';') != STR::npos)
 					break;
-				if(i + 1 >= params.size())
+				if (i + 1 >= params.size())
 					throw ErrorException("Wrong character out of server scope{}");
 			}
 		}
@@ -282,7 +282,6 @@ void ConfigurationParser::checkServers()
 
 	for (it1 = this->_servers.begin(); it1 != this->_servers.end() - 1; it1++)
 	{
-//		for (it2 = it1 + 1; it2 != this->_servers.end() - 1; it1++)
         for (it2 = it1 + 1; it2 != this->_servers.end(); it2++)
 		{
 			if (it1->getPort() == it2->getPort() && it1->getHost() == it2->getHost() && \
@@ -305,9 +304,9 @@ int ConfigurationParser::strCompare(STR str1, STR str2, size_t pos)
 	}
 	if (i == str2.length() && pos <= str1.length() && (str1.length() == pos || isspace(str1[pos])))
 	{
-		return(0);
+		return (0);
 	}
-	return(1);
+	return (1);
 }
 
 int ConfigurationParser::printConfig()

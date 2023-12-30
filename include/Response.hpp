@@ -15,11 +15,11 @@
 
 # include "Webserv.hpp"
 # include "Request.hpp"
-//# include <unordered_map>
 
 class Response
 {
 	public:
+        static Mime         _mime;
 		Response();
 		Response(Request&);
 		~Response();
@@ -27,8 +27,8 @@ class Response
 		Response &operator=(const Response &copy);
 
 		STR		getResponse();
-		size_t	getLen()const;
-		int		getCode()const;
+		size_t	getLen()    const;
+		int		getCode()   const;
 
 		void	setRequest(Request &);
 		void	setServer(ServerConfiguration &);
@@ -42,16 +42,14 @@ class Response
 		void	setErrorResponse(short code);
 		STR		removeBoundary(STR &body, STR &boundary);
 		
-		STR			_response_ready;
-		CGIConfig	_cgi_conf;
-		Request		_request;
-        Mime        _mime;
-//		static const std::unordered_map<STR, STR>	mimeTypes;
+		STR			        _response_ready;
+		CGIConfig	        _cgi_conf;
+		Request		        _request;
 
 	private:
 		ServerConfiguration			_server;
 		STR							_target_file;
-		VECTOR<uint8_t>						_body;
+		VECTOR<uint8_t>				_body;
 		size_t						_body_len;
 		STR							_response_body;
 		STR							_location;

@@ -91,7 +91,7 @@ void	CGIConfig::CGIEnvInitialization(Request &request, const VECTOR<Location>::i
 	this->_env["REDIRECT_STATUS"] = "200";
 	this->_env["SERVER_SOFTWARE"] = "AMANIX";
 
-	MAP<STR, STR>request_headers = request.getHeaders();
+	MAP<STR, STR> request_headers = request.getHeaders();
 	for (MAP<STR, STR>::iterator iter = request_headers.begin();
 		iter != request_headers.end(); ++iter)
 	{
@@ -201,7 +201,7 @@ int	CGIConfig::startFinder(const STR path, const STR delim)
 		return -1;
 	size_t  temp = path.find(delim);
 	if (temp != STR::npos)
-		return temp;
+		return (temp);
 	else
 		return -1;
 }
@@ -217,7 +217,7 @@ STR	CGIConfig::decode(STR &path)
 		path.replace(token, 3, toString(decimal));
 		token = path.find("%");
 	}
-	return path;
+	return (path);
 }
 
 STR	CGIConfig::getPathInfo(STR &path, VECTOR<STR> ext)

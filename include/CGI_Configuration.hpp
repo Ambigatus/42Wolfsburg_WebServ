@@ -46,7 +46,7 @@ class CGIConfig
 	STR		cookies(const STR &str);
 
 	void	setCGIpid(pid_t cgi_pid);
-	void	setCGIpath(const STR &sgi_path);
+	void	setCGIpath(const STR &cgi_path);
 
 	const MAP<STR, STR> &getEnv() const;
 	const pid_t			&getCGIpid() const;

@@ -1,5 +1,6 @@
 #include "../include/Response.hpp"
 
+Mime Response::_mime;
 
 Response::Response()
 {
@@ -62,73 +63,23 @@ Response &Response::operator=(const Response &copy)
 	return *this;
 }
 
-//const std::unordered_map<STR, STR>	Response::mimeTypes = {
-//	{".html", "text/html"},
-//	{".htm", "text/html"},
-//	{".css", "text/css"},
-//	{".ico", "image/x-icon"},
-//	{".avi", "video/x-msvideo"},
-//	{".bmp", "image/bmp"},
-//	{".doc", "application/msword"},
-//	{".gif", "image/gif"},
-//	{".gz", "application/x-gzip"},
-//	{".ico", "image/x-icon"},
-//	{".jpg", "image/jpeg"},
-//	{".jpeg", "image/jpeg"},
-//	{".png", "image/png"},
-//	{".txt", "text/plain"},
-//	{".mp3", "audio/mp3"},
-//	{".pdf", "application/pdf"},
-//	{"default", "text/html"}
-//};
-
-
-//void	Response::addMimeType()
-//{
-//	_response_ready.append("Content-Type: ");
-//
-//	size_t dotPos = _target_file.rfind(".");
-//	if (dotPos != STR::npos && _code == 200)
-//	{
-//		STR extension = _target_file.substr(dotPos);
-//		std::unordered_map<STR, STR>::const_iterator it = mimeTypes.find(extension);
-//		if (it != mimeTypes.end())
-//			_response_ready.append(it->second);
-//		else
-//			_response_ready.append(mimeTypes.at(".default"));
-//
-//	}
-//	else
-//	{
-//		_response_ready.append(mimeTypes.at(".default"));
-//	}
-//	_response_ready.append("\r\n");
-//}
-
 void Response::addMimeType()
 {
     _response_ready.append("Content-Type: ");
-
-    size_t dotPos = _target_file.rfind(".");
-    if (dotPos != STR::npos && _code == 200)
-    {
-        STR extension = _target_file.substr(dotPos);
-        STR mimeType = _mime.getFileType(extension);
-        _response_ready.append(mimeType);
-    }
+    if(_target_file.rfind(".", std::string::npos) != std::string::npos && _code == 200)
+        _response_ready.append(_mime.getFileType(_target_file.substr(_target_file.rfind(".", std::string::npos))) );
     else
-    {
-        _response_ready.append(_mime.getFileType(".default"));
-    }
-
+        _response_ready.append(_mime.getFileType("default"));
     _response_ready.append("\r\n");
 }
 
 void	Response::addContentLen()
 {
-	std::stringstream	ss;
-	ss << _response_body.length();
-	_response_ready.append("Content-Length: " + ss.str() + "\r\n");
+    std::stringstream ss;
+    ss << _response_body.length();
+    _response_ready.append("Content-Length: ");
+    _response_ready.append(ss.str());
+    _response_ready.append("\r\n");
 }
 
 void	Response::addConnection()
@@ -263,6 +214,7 @@ int	Response::handleCgi(STR &loc_key)
 	size_t	pos;
 
 	path = this->_request.getPath();
+    COUT << path << "There is the path" << ENDL;
 	if (path[0] && path[0] == '/')
 		path.erase(0, 1);
 	if (path == "cgi-bin")
@@ -283,7 +235,6 @@ int	Response::handleCgi(STR &loc_key)
 		_code = 501;
 		return 1;
 	}
-
 	if (ConfigurationFile::getTypePath(path) != 1)
 	{
 		_code = 404;
@@ -320,7 +271,7 @@ static void getLocationMatch(STR &path, VECTOR<Location> locations, STR &locatio
 	{
 		if (path.find(it->getPath()) == 0)
 		{
-			if (it->getPath() == "/" || path.length() || path[it->getPath().length()] == '/')
+			if (it->getPath() == "/" || path.length() == it->getPath().length() || path[it->getPath().length()] == '/')
 			{
 				if(it->getPath().length() > best_match)
 				{
@@ -604,7 +555,7 @@ int Response::readFile()
 	}
 
 	std::ostringstream ss;
-		ss << file.rdbuf();
+    ss << file.rdbuf();
 	_response_body = ss.str();
 	return 0;
 }

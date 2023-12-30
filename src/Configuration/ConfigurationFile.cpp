@@ -1,7 +1,7 @@
 #include "../../include/ConfigurationFile.hpp"
 
 ConfigurationFile::ConfigurationFile() { }
-ConfigurationFile::ConfigurationFile(STR const path) { this->_path = path;}
+ConfigurationFile::ConfigurationFile(STR const path) : _path(path) { }
 ConfigurationFile::~ConfigurationFile() { }
 
 ConfigurationFile::ConfigurationFile(const ConfigurationFile &copy)
@@ -27,7 +27,6 @@ int ConfigurationFile::getTypePath(STR const path)
 	struct stat     buffer;
 	int result;
     result = stat(path.c_str(), &buffer);
-    COUT << result << "  RESULT" << ENDL;
 
 	if (result == 0)
 	{
@@ -69,4 +68,7 @@ STR ConfigurationFile::readFile(STR path)
 	return (stream_binding.str());
 }
 
-STR ConfigurationFile::getPath() {return(this->_path);}
+STR ConfigurationFile::getPath()
+{
+    return (this->_path);
+}

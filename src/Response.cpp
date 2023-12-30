@@ -237,6 +237,7 @@ int	Response::handleCgi(STR &loc_key)
 	}
 	if (ConfigurationFile::getTypePath(path) != 1)
 	{
+        printf("Yes, wrong path");
 		_code = 404;
 		return 1;
 	}
@@ -512,6 +513,7 @@ int	Response::buildBody()
 		std::ofstream file(_target_file.c_str(), std::ios::binary);
 		if (file.fail())
 		{
+            printf("Yes, file fail");
 			_code = 404;
 			return 1;
 		}
@@ -531,6 +533,7 @@ int	Response::buildBody()
 	{
 		if (!fileExists(_target_file))
 		{
+            printf("Yes, I think that file doesn't exist");
 			_code = 404;
 			return 1;
 		}
@@ -550,6 +553,7 @@ int Response::readFile()
 
 	if (file.fail())
 	{
+        printf("Yes, fail reading");
 		_code = 404;
 		return (1);
 	}

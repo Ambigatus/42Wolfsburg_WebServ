@@ -31,23 +31,6 @@ Mime::Mime()
 	_types[".mp3"] = "audio/mp3";
 	_types[".pdf"] = "application/pdf";
 	_types["default"] = "text/html"; // Default MIME type
-	/*additonal types, can comment it if something will be wrong*/
-	_types[".js"] = "application/javascript";
-	_types[".json"] = "application/json";
-	_types[".xml"] = "application/xml";
-	_types[".svg"] = "image/svg+xml";
-	_types[".woff"] = "application/font-woff";
-	_types[".woff2"] = "application/font-woff2";
-	_types[".ttf"] = "application/font-sfnt";
-	_types[".mp4"] = "video/mp4";
-	_types[".ogg"] = "audio/ogg";
-	_types[".zip"] = "application/zip";
-	_types[".tar"] = "application/x-tar";
-	_types[".md"] = "text/markdown";
-	_types[".csv"] = "text/csv";
-	_types[".wasm"] = "application/wasm";
-	_types[".exe"] = "application/x-msdownload";
-	_types[".pem"] = "application/x-x509-ca-cert";
 }
 
 std::string	Mime::getFileType(std::string extension)

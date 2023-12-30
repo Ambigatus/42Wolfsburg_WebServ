@@ -30,38 +30,38 @@ Response::Response(Request &req) : _request(req)
 
 Response::~Response(){}
 
-Response::Response(const Response &copy)
-{
-	if (this != &copy)
-	{
-		this->_target_file = copy._target_file;
-		this->_body_len = copy._body_len;
-		this->_response_ready = copy._response_ready;
-		this->_location = copy._location;
-		this->_code = copy._code;
-		this->_cgi = copy._cgi;
-		this->_cgi_response_len = copy._cgi_response_len;
-		this->_auto_index = copy._auto_index;
-	}
-	return ;
-}
-
-
-Response &Response::operator=(const Response &copy)
-{
-	if (this != &copy)
-	{
-		this->_target_file = copy._target_file;
-		this->_body_len = copy._body_len;
-		this->_response_ready = copy._response_ready;
-		this->_location = copy._location;
-		this->_code = copy._code;
-		this->_cgi = copy._cgi;
-		this->_cgi_response_len = copy._cgi_response_len;
-		this->_auto_index = copy._auto_index;
-	}
-	return *this;
-}
+//Response::Response(const Response &copy)
+//{
+//	if (this != &copy)
+//	{
+//		this->_target_file = copy._target_file;
+//		this->_body_len = copy._body_len;
+//		this->_response_ready = copy._response_ready;
+//		this->_location = copy._location;
+//		this->_code = copy._code;
+//		this->_cgi = copy._cgi;
+//		this->_cgi_response_len = copy._cgi_response_len;
+//		this->_auto_index = copy._auto_index;
+//	}
+//	return ;
+//}
+//
+//
+//Response &Response::operator=(const Response &copy)
+//{
+//	if (this != &copy)
+//	{
+//		this->_target_file = copy._target_file;
+//		this->_body_len = copy._body_len;
+//		this->_response_ready = copy._response_ready;
+//		this->_location = copy._location;
+//		this->_code = copy._code;
+//		this->_cgi = copy._cgi;
+//		this->_cgi_response_len = copy._cgi_response_len;
+//		this->_auto_index = copy._auto_index;
+//	}
+//	return *this;
+//}
 
 void Response::addMimeType()
 {

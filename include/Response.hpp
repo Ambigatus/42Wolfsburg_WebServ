@@ -23,8 +23,8 @@ class Response
 		Response();
 		Response(Request&);
 		~Response();
-		Response(const Response &copy);
-		Response &operator=(const Response &copy);
+//		Response(const Response &copy);
+//		Response &operator=(const Response &copy);
 
 		STR		getResponse();
 		size_t	getLen()    const;

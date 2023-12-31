@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Test Website for 42 Project: webserv - main</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+<header>
+    <h1>webserv</h1>
+</header>
+<div class="container">
+    <div class="actions">
+        <h2>Available actions:</h2>
+        <ul>
+            <li>Enter text to upload</li>
+            <li>Choose a file to upload</li>
+            <li>Check out directory listing</li>
+            <li>Delete the submitted text</li>
+            <li>Go to the CGI testing page</li>
+        </ul>
+    </div>
+    <div class="content-group">
+        <div class="content-subgroup">
+            <div class="input-container">
+                <input type="text" id="input" name="input" class="input" placeholder="Enter text">
+                <button class="button" onclick="submitText()">Submit text</button>
+            </div>
+            <div class="input-container">
+                <input type="file" id="image" name="image" class="input">
+                <button class="button" onclick="submitImage()">Submit image</button>
+            </div>
+        </div>
+
+        <div class="content-subgroup">
+            <div class="input-container">
+                <a href="#">
+                    <button class="button" onclick="deleteText()">Delete text</button>
+                </a>
+            </div>
+            <div class="input-container">
+                <a href="/api/">
+                    <button class="button">Check out dirlisting</button>
+                </a>
+            </div>
+        </div>
+
+        <div class="content-subgroup">
+            <div class="input-container">
+                <a href="../fakeLocationThatDoesntExist/">
+                    <button class="button">Go to CGI page</button>
+                </a>
+            </div>
+            <div class="input-container">
+                <a href="/cgi-bin/loop.py">
+                    <button class="button">Start an infinite loop py script <br><small>Open another tab and send parallel requests before the child hits its timeout!</small></button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+
+</html>

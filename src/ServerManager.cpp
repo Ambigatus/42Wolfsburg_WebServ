@@ -392,17 +392,3 @@ void ServerManager::isReqBodyEmpty(Client &client)
         client.request.setBody(tmp);
     }
 }
-//{
-//    std::string tmp;
-//    std::fstream file;  // Changed from std::ifstream to std::fstream
-//    std::stringstream string_stream;
-//
-//    if (client.request.getBody().empty())
-//    {
-//        file.open(client.response._cgi_conf.getCGIpath().c_str());  // Use .open() to open the file
-//        string_stream << file.rdbuf();
-//        tmp = string_stream.str();
-//        client.request.setBody(tmp);
-//        file.close();  // Close the file after reading
-//    }
-//}

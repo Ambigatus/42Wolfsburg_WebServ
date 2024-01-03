@@ -3,7 +3,7 @@
 
 # include "Webserv.hpp"
 
-# define TIME_ZONE	2;
+# define TIME_ZONE	1;
 
 enum LogPrio
 {

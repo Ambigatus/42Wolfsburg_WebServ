@@ -245,9 +245,6 @@ void Request::_handleHeaders()
 			this->_boundary = _request_headers["content-type"].substr(pos + 9, _request_headers["content-type"].size());
 		this->_fmultiform = true;
 	}
-	COUT << "FBODYYYYY " << _fbody << ENDL;
-	COUT << "FLAGG " << _fmultiform << ENDL;
-	COUT << "SERVER NAME  " << _server_name << ENDL;
 }
 
 short Request::errorCode()

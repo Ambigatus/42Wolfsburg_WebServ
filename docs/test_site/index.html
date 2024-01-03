@@ -43,6 +43,7 @@
         <div class="input-container_01">
             <input type="file" id="image" name="image" class="input_01">
             <button class="button_01" onclick="submitImage()">Submit image</button>
+
         </div>
     </div>
 <!--       image part finish-->
@@ -51,8 +52,9 @@
 
         <div class="input-container_01">
             <a href="/api/">
-                <button class="button_01">Check out dirlisting</button>
+                <button class="button_01">Check out directory</button>
             </a>
+
         </div>
     </div>
 <!--    directory part finish -->
@@ -62,6 +64,7 @@
             <a href="../fakeLocationThatDoesntExist/">
                 <button class="button_01">Go to CGI page</button>
             </a>
+
         </div>
     </div>
 <!--    cgi part finish -->
@@ -69,13 +72,28 @@
     <div class="loop_container">
         <div class="input-container_01">
             <a href="/cgi-bin/loop.py">
-                <button class="button_01">Start an infinite loop py script <br><tiny>Open another tab and send parallel requests before the child hits its timeout!</tiny></button>
+                <button class="button_01">Start loop</button>
             </a>
+
         </div>
     </div>
 <!--    loop part finish-->
 </div>
-
+<div class="hint_container">
+    <table>
+        <thead>
+        <tr>
+            <th><p>Hint: enter text to upload and submit it</p></th>
+            <th> <p>Hint: choose a file on your Mac to upload </p></th>
+            <th> <p>Hint: check out directory listing with files</p></th>
+            <th><p>Hint: go to the CGI testing page</p></th>
+            <th><p>Hint: open another tab and send parallel requests before the child hits its timeout!</p></th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 
 </body>
 

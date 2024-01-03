@@ -55,10 +55,12 @@ h2 {
     font-size: 64px;
 }
 
-p, ul {
-    font-size: 32px;
-    text-align: left;
+p {
+    font-size: 20px;
     line-height: 1.1;
+    color: white;
+    font-family: fantasy;
+    text-align: center;
 }
 
 .logtext {
@@ -67,11 +69,6 @@ p, ul {
     margin-right: 300px;
 }
 
-.tiny {
-    font-size: 12px;
-    text-align: left;
-    line-height: 1.1;
-}
 
 .img_float_right {
     text-align: right;
@@ -155,7 +152,6 @@ input {
 .input_01:focus {
     border: none;
     outline: none;
-    /* 	background-color: #e0e0e0; */
 }
 
 .logContainer {
@@ -163,4 +159,19 @@ input {
     flex: 1;
     position: relative;
     z-index: 2;
+}
+
+.hint_container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.hint_container p {
+    margin-left: 20px;
+}
+
+.hint_container table, th, td {
+    margin-top: 20px;
+    border: 1px solid white;
 }

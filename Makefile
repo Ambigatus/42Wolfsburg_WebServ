@@ -6,7 +6,6 @@ SRC =		src/main.cpp \
 			src/Response.cpp \
 			src/Client.cpp \
 			src/Request/Request.cpp \
-			src/Request/RequestParser.cpp \
 			src/Configuration/ConfigurationFile.cpp \
 			src/Configuration/ConfigurationParser.cpp \
 			src/ServerConfiguration/Getters.cpp \

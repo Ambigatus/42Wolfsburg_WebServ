@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/password.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="assets/js/password.js"></script>
+    <title>Fusion</title>
+</head>
+
+<body class="intro__dop">
+<header class="header">
+    <div class="container">
+        <div class ="header__inner">
+            <a class = "nav__link__dop" href="https://42wolfsburg.de/de/">42Wolfsburg</a>
+            <nav class="nav">
+                <a class="nav__link__dop" href="index.html">Home</a>
+                <a class="nav__link__dop" href="upload.html">Upload</a>
+                <a class="nav__link__dop" href="about.html">About</a>
+                <a class="nav__link__dop" href="cgi_test.html">CGI test</a>
+                <a class="nav__link__dop" href="/cgi-bin/acc.py">Account</a>
+                <a class="nav__link" href="delete_page.html">Delete page</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+
+<div class="pass__block">
+    <h1> CGI: </h1> <br />
+    <form action = "../cgi-bin/get_hello.py" method = "get">
+        First Name: <input type = "text" name = "first_name">  <br />
+        <br>
+        Last Name: <input type = "text" name = "last_name" />
+        <br>
+        <button class="submit_btn" type = "submit"> Submit</button>
+    </form>
+</div>
+
+<div class="pass__block loop">
+    <a href="../cgi-bin/loop.py">
+        <button class="submit_btn">Start an infinite loop</button>
+    </a>
+    <p class="text__pass">Open another tab and send parallel requests before the child hits its timeout!</p>
+</div>
+
+</body>
+</html>
